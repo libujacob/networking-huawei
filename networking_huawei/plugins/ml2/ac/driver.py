@@ -311,7 +311,7 @@ def rest_request(id, entry_info, operation):
             LOG.error(_LE("Exception is %s."), e)
     else:
         LOG.debug("The operation is wrong.")
-        raise ml2_exc.MechanismDriverError()
+        raise ml2_exc.MechanismDriverError(method='rest_request')
 
 
 @log_helpers.log_method_call
@@ -319,7 +319,7 @@ def rest_callback(errorcode, reason, status, data=None):
     if status == requests.codes.ok and reason is None:
         if errorcode != '0':
             LOG.error(_LE("Raise MechanismDriverError."))
-            raise ml2_exc.MechanismDriverError()
+            raise ml2_exc.MechanismDriverError(method='rest_callback')
     elif status == requests.codes.no_content:
         pass
     else:
@@ -332,7 +332,8 @@ def default_security_group_rest_callback(
     if status == requests.codes.ok and reason is None:
         if errorcode != '0':
             LOG.error(_LE("Raise MechanismDriverError."))
-            raise ml2_exc.MechanismDriverError()
+            raise ml2_exc.MechanismDriverError(method="default_security_"
+                                                      "group_rest_callback")
     elif status == requests.codes.no_content:
         pass
     else:
@@ -620,19 +621,19 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                                    self.__callBack__)
         else:
             LOG.error(_LE("The operation is wrong."))
-            raise ml2_exc.MechanismDriverError()
+            raise ml2_exc.MechanismDriverError(method='__restRequest__')
 
     @log_helpers.log_method_call
     def __callBack__(self, errorCode, reason, status, data=None):
         if status == requests.codes.ok and reason is None:
             if errorCode != '0':
                 LOG.debug("Raise mechanism driver error.")
-                raise ml2_exc.MechanismDriverError()
+                raise ml2_exc.MechanismDriverError(method='__callBack__')
         elif status == requests.codes.no_content:
             pass
         else:
             LOG.debug("Raise mechanism driver error.")
-            raise ml2_exc.MechanismDriverError()
+            raise ml2_exc.MechanismDriverError(method='__callBack__')
 
     def __setMacFormat__(self, mac_address):
         pureMac = re.sub("[^a-zA-Z0-9]", "", mac_address)
@@ -642,4 +643,4 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
 
     @log_helpers.log_method_call
     def __restRequestError__(self, errorCode, reason):
-        raise ml2_exc.MechanismDriverError()
+        raise ml2_exc.MechanismDriverError(method='__restRequestError__')

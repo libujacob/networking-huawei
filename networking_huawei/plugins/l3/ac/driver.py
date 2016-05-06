@@ -155,7 +155,7 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
                                    entry_info, False, self.__callBack__)
         else:
             LOG.debug("The operation is wrong.")
-            raise ml2_exc.MechanismDriverError()
+            raise ml2_exc.MechanismDriverError(method='__rest_request__')
 
     @log_helpers.log_method_call
     def __callBack__(self, errorcode, reason, status, data=None):
