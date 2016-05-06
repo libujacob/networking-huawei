@@ -28,7 +28,7 @@ This directory contains the networking-huawei devstack plugin. To configure the 
 
    Or, if you want to pull the networking-huawei repository from Github and use a particular branch (for example Liberty, here)
 
-     > enable_plugin networking-huawei git://git.openstack.org/openstack/networking-huawei master
+     > enable_plugin networking-huawei https://github.com/openstack/networking-huawei.git master
 
    For more information, see the "Externally Hosted Plugins" section of http://docs.openstack.org/developer/devstack/plugins.html.
 
