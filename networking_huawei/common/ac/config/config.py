@@ -52,7 +52,10 @@ HUAWEI_AC_DRIVER_OPTS = [
                help=_('AC REST request timeout retry count')),
     cfg.IntOpt('ac_token_retry',
                default=3,
-               help=_('AC token retry count'))
+               help=_('AC token retry count')),
+    cfg.BoolOpt('ac_simulator',
+               default=False,
+               help=_('AC simulate setup'))
 ]
 
 cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "ml2_huawei")
