@@ -7,6 +7,7 @@ This directory contains the networking-huawei devstack plugin. To configure the 
 1) Download DevStack
 
      > git clone https://git.openstack.org/openstack-dev/devstack
+
 2) Enable the plugin
 
 To enable the plugin, add a line of the form:
