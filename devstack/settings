@@ -1,5 +1,9 @@
 Q_ML2_PLUGIN_MECHANISM_DRIVERS=huawei_ac_ml2,openvswitch
 ML2_L3_PLUGIN=huawei_ac_router
 Q_ML2_PLUGIN_TYPE_DRIVERS=local,flat,vlan,gre,vxlan
+
+Q_PLUGIN_EXTRA_CONF_PATH=$NEUTRON_CONF_DIR/plugins/ml2
+Q_PLUGIN_EXTRA_CONF_FILES=(huawei_ac_config.ini)
+
 ENABLE_TENANT_VLANS=True
 enable_service huawei-ac
