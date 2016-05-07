@@ -26,12 +26,12 @@ LOG = logging.getLogger(__name__)
 class RestClient(object):
     # Initialized and reads the configuration file base parameters
     def __init__(self):
-        self.username = cfg.CONF.ml2_huawei.username
-        self.password = cfg.CONF.ml2_huawei.password
-        self.timeout = float(cfg.CONF.ml2_huawei.ac_request_timeout)
-        self.timeout_retry = int(cfg.CONF.ml2_huawei.ac_timeout_retry)
-        self.token_retry = int(cfg.CONF.ml2_huawei.ac_token_retry)
-        self.ac_simulate = cfg.CONF.ml2_huawei.ac_simulator
+        self.username = cfg.CONF.ml2_huawei_ac.username
+        self.password = cfg.CONF.ml2_huawei_ac.password
+        self.timeout = float(cfg.CONF.ml2_huawei_ac.request_timeout)
+        self.timeout_retry = int(cfg.CONF.ml2_huawei_ac.timeout_retry)
+        self.token_retry = int(cfg.CONF.ml2_huawei_ac.token_retry)
+        self.ac_simulate = cfg.CONF.ml2_huawei_ac.simulator
 
     # Send the JSON message to the controller
     def send(self, host, port, method, url,

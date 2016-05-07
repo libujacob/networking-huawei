@@ -163,7 +163,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.create_router(context, router_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei.host + ":" + str(cfg.CONF.ml2_huawei.port) + ac_const.AC_URL + '/' + \
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
                 ac_const.AC_NEUTRON_RESOURCES['create_router']['rsrc']
         params = jsonutils.dumps(body)
         mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['create_router']['method'], tst_url, fake_rest_headers, params)
@@ -192,7 +192,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.create_router(context, router_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei.host + ":" + str(cfg.CONF.ml2_huawei.port) + ac_const.AC_URL + '/' + \
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
                 ac_const.AC_NEUTRON_RESOURCES['create_router']['rsrc']
         params = jsonutils.dumps(body)
         mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['create_router']['method'], tst_url, fake_rest_headers, params)
@@ -277,7 +277,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.delete_router(context, fake_router_db['id'])
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei.host + ":" + str(cfg.CONF.ml2_huawei.port) + ac_const.AC_URL + '/' + \
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
                 ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
         mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['delete_router']['method'], tst_url, fake_rest_headers, params)
@@ -292,7 +292,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.delete_router(context, fake_router_db['id'])
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei.host + ":" + str(cfg.CONF.ml2_huawei.port) + ac_const.AC_URL + '/' + \
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
                 ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
         mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['delete_router']['method'], tst_url, fake_rest_headers, params)
@@ -321,7 +321,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
         router_in = {'portId': interface_info['port_id'],
                 'routerId': fake_router_db['id'],
-                'serviceName': cfg.CONF.ml2_huawei.service_name,
+                'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
                 'tenantId': router_info['router']['tenant_id']}
 
         body = {'routerInterface': router_in}
@@ -334,7 +334,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                     acl3router = HuaweiACL3RouterPlugin()
                     acl3router.add_router_interface(context, fake_router_db['id'], interface_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei.host + ":" + str(cfg.CONF.ml2_huawei.port) + ac_const.AC_URL + '/' + \
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
                 ac_const.AC_NEUTRON_RESOURCES['add_router_interface']['rsrc'] + '/' + fake_router_db['id']
         params = jsonutils.dumps(body)
         mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['add_router_interface']['method'], tst_url, fake_rest_headers, params)
@@ -362,7 +362,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
         router_in = {'portId': interface_info['port_id'],
                 'id': fake_router_db['id'],
-                'serviceName': cfg.CONF.ml2_huawei.service_name,
+                'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
                 'tenantId': router_info['router']['tenant_id']}
 
         response = self._create_rest_response(requests.codes.all_good)
@@ -373,7 +373,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                     acl3router = HuaweiACL3RouterPlugin()
                     acl3router.remove_router_interface(context, fake_router_db['id'], interface_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei.host + ":" + str(cfg.CONF.ml2_huawei.port) + ac_const.AC_URL + '/' + \
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
                 ac_const.AC_NEUTRON_RESOURCES['delete_router_interface']['rsrc'] + '/' + fake_router_db['id']
         params = jsonutils.dumps(router_in)
         mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['delete_router_interface']['method'], tst_url, fake_rest_headers, params)

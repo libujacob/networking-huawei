@@ -28,9 +28,9 @@ LOG = logging.getLogger(__name__)
 class RESTService(object):
 
     def __init__(self):
-        self.host = cfg.CONF.ml2_huawei.host
-        self.port = cfg.CONF.ml2_huawei.port
-        self.serviceName = cfg.CONF.ml2_huawei.service_name
+        self.host = cfg.CONF.ml2_huawei_ac.host
+        self.port = cfg.CONF.ml2_huawei_ac.port
+        self.serviceName = cfg.CONF.ml2_huawei_ac.service_name
         self.url = "http://" + self.host + ":" + str(self.port)
 
     def requestREST(self, method, url, id, body,
@@ -92,12 +92,12 @@ class RESTService(object):
     def reportOpenstackName(self):
 
         openstackInfo = {
-            'neutron_name': cfg.CONF.ml2_huawei.ac_neutron_name,
-            'neutron_ip': cfg.CONF.ml2_huawei.ac_neutron_ip
+            'neutron_name': cfg.CONF.ml2_huawei_ac.ac_neutron_name,
+            'neutron_ip': cfg.CONF.ml2_huawei_ac.ac_neutron_ip
         }
 
         body = {
-            "neutron_name": cfg.CONF.ml2_huawei.ac_neutron_name,
+            "neutron_name": cfg.CONF.ml2_huawei_ac.ac_neutron_name,
             "neutron_ac_data": openstackInfo
         }
 
@@ -114,6 +114,6 @@ class RESTService(object):
 
     def __reportOpenstackNameError__(self, status, reason):
 
-        time.sleep(int(cfg.CONF.ml2_huawei.ac_interval))
+        time.sleep(int(cfg.CONF.ml2_huawei_ac.ac_interval))
 
         self.reportOpenstackName()

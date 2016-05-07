@@ -44,18 +44,18 @@ HUAWEI_AC_DRIVER_OPTS = [
     cfg.StrOpt('service_name',
                default='physnet1',
                help=_('Service name')),
-    cfg.IntOpt('ac_request_timeout',
+    cfg.IntOpt('request_timeout',
                default=60,
                help=_('AC REST request timeout value')),
-    cfg.IntOpt('ac_timeout_retry',
+    cfg.IntOpt('timeout_retry',
                default=3,
                help=_('AC REST request timeout retry count')),
-    cfg.IntOpt('ac_token_retry',
+    cfg.IntOpt('token_retry',
                default=3,
                help=_('AC token retry count')),
-    cfg.BoolOpt('ac_simulator',
+    cfg.BoolOpt('simulator',
                default=False,
                help=_('AC simulate setup'))
 ]
 
-cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "ml2_huawei")
+cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "ml2_huawei_ac")
