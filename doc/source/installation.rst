@@ -6,14 +6,14 @@ Installation
 ----------
 This guide will help you to install networking_huawei plugin for openstack to communicate with Huawei Agile Controller 2.0.
 
-This guide does not necessarily cover all OpenStack installation steps especially at production scale. Supported only for Liberty and master versions.
+This guide does not necessarily cover all OpenStack installation steps especially at production scale. Plugin only supported for OpenStack Liberty and master versions.
 
 There must be an Agile Controller 2.0 running in a machine which is reachable from the Neutron Server.
 
 2. Networking-huawei plugin installation
 ----------------------------------------
 
-:2.1 DevStack deployment
+:2.1 DevStack deployment:
 
      1. Download the DevStack "git clone https://git.openstack.org/openstack-dev/devstack".
      2. Create user stack "devstack/tools/create-stack-user.sh; su stack".
@@ -24,16 +24,12 @@ There must be an Agile Controller 2.0 running in a machine which is reachable fr
      7. Update the "etc/neutron/huawei_ac_config.ini" file with host, port and other AC configurations.
      8. Start the DevStack "./stack.sh".
 
-:2.2 Setup where OpenStack Controller is already deployed
+:2.2 Setup where OpenStack Controller is already deployed:
 
      1. Install the plugin "pip install git+git://git.openstack.org/openstack/networking-huawei".
      2. Update /etc/neutron/plugins/ml2/ml2_conf.ini for L2 plugin.
-          ::
-            [[post-config|/etc/neutron/neutron.conf]]
-            [DEFAULT]
-            service_plugins = huawei_ac_router
+     ::
 
-            [[post-config|/$Q_PLUGIN_CONF_FILE]]
             [ml2]
             type_drivers = local,vxlan
             mechanism_drivers = huawei_ac_ml2
@@ -57,6 +53,7 @@ There must be an Agile Controller 2.0 running in a machine which is reachable fr
             tunnel_type = vxlan
 
      3. Update /etc/neutron/neutron.conf for L3 router plugin.
+     ::
 
             [DEFAULT]
             service_plugins = huawei_ac_router
