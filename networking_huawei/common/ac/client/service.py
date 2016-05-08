@@ -66,7 +66,7 @@ class RESTService(object):
         }
         result = self.__doRequestSerive__(data='', status='', reason='')
         if client.http_success(result):
-            LOG.debug('AC:openid is invalid, get openid again.')
+            LOG.debug('AC: request is success.')
         else:
             if (result['status'] == requests.codes.ok) and \
                 result['response']['code'] == requests.codes.no_content:
