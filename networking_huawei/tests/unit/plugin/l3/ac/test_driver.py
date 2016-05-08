@@ -18,6 +18,7 @@ import copy
 import mock
 import networking_huawei.common.ac.client.restclient as ac_rest
 from networking_huawei.common.ac import constants as ac_const
+from networking_huawei.common import exceptions as ml2_exc
 from networking_huawei.plugins.l3.ac.driver import HuaweiACL3RouterPlugin
 from neutron.db.l3_db import L3_NAT_db_mixin
 from neutron.db.l3_dvr_db import L3_NAT_with_dvr_db_mixin
@@ -223,7 +224,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                    'create_router',
                                    return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
-                self.assertRaises(Exception, acl3router.create_router,
+                self.assertRaises(ml2_exc.MechanismDriverError,
+                                  acl3router.create_router,
                                   context, router_info)
 
     def test_create_router_failure_with_errorcode(self):
@@ -240,7 +242,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                    'create_router',
                                    return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
-                self.assertRaises(Exception,
+                self.assertRaises(ml2_exc.MechanismDriverError,
                                   acl3router.create_router,
                                   context, router_info)
 

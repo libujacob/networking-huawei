@@ -54,8 +54,8 @@ HUAWEI_AC_DRIVER_OPTS = [
                default=3,
                help=_('AC token retry count')),
     cfg.BoolOpt('simulator',
-               default=False,
-               help=_('AC simulate setup'))
+                default=False,
+                help=_('AC simulate setup'))
 ]
 
 cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "ml2_huawei_ac")

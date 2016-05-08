@@ -162,9 +162,9 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
         if status == requests.codes.ok and reason is None:
             if errorcode != '0':
                 LOG.debug("Raise mechanism driver error.")
-                raise Exception
+                raise ml2_exc.MechanismDriverError(method='__callBack__')
         elif status == requests.codes.no_content:
             pass
         else:
             LOG.debug("Raise mechanism driver error.")
-            raise Exception
+            raise ml2_exc.MechanismDriverError(method='__callBack__')
