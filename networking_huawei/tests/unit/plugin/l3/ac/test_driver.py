@@ -16,22 +16,20 @@
 
 import copy
 import mock
-
-import requests
-
+import networking_huawei.common.ac.client.restclient as ac_rest
+from networking_huawei.common.ac import constants as ac_const
+from networking_huawei.plugins.l3.ac.driver import HuaweiACL3RouterPlugin
+from neutron.db.l3_db import L3_NAT_db_mixin
+from neutron.db.l3_dvr_db import L3_NAT_with_dvr_db_mixin
+from neutron.db.l3_hamode_db import L3_HA_NAT_db_mixin
 from neutron.extensions import l3
+from neutron.plugins.common import constants
 from neutron.tests.unit.api.v2 import test_base
 from neutron.tests.unit.extensions import base as test_neutron_extensions
-import networking_huawei.common.ac.client.restclient as ac_rest
-from networking_huawei.plugins.l3.ac.driver import HuaweiACL3RouterPlugin
-from webob import exc
-from neutron.plugins.common import constants
-from neutron.db.l3_db import L3_NAT_db_mixin
-from neutron.db.l3_hamode_db import L3_HA_NAT_db_mixin
-from neutron.db.l3_dvr_db import L3_NAT_with_dvr_db_mixin
-from networking_huawei.common.ac import constants as ac_const
-from oslo_serialization import jsonutils
 from oslo_config import cfg
+from oslo_serialization import jsonutils
+import requests
+from webob import exc
 
 fake_tenant_id = '048aa98a3ec345dc8b14427c81e276cf'
 
@@ -78,17 +76,18 @@ fake_interface_add = {'subnet_id': fake_subnet_id}
 fake_interface_remove = {'subnet_id': fake_subnet_id,
                          'port_id': fake_port_id}
 
-fake_router_db={'id':fake_router_uuid,
-                     'name':'router_abc',
-                     'admin_state_up': True,
-                     'tenant_id': fake_tenant_id,
-                     'external_gateway_info': None,
-                     'distributed': 'distributed',
-                     'ha': True,
-                     'routes': 'route1'}
+fake_router_db = {'id': fake_router_uuid,
+                  'name': 'router_abc',
+                  'admin_state_up': True,
+                  'tenant_id': fake_tenant_id,
+                  'external_gateway_info': None,
+                  'distributed': 'distributed',
+                  'ha': True,
+                  'routes': 'route1'}
 
 fake_rest_headers = {"Content-type": "application/json",
-                   "Accept": "application/json"}
+                     "Accept": "application/json"}
+
 
 class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
@@ -103,11 +102,6 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         self.instance = self.plugin.return_value
         self.restc = ac_rest.RestClient
 
-    def _mock_req_res(self, status_code):
-        response = mock.Mock(status_code=status_code)
-        response.raise_for_status = mock.Mock()
-        return response
-
     def _test_send_msg(self, dict_info, oper_type, url):
         if oper_type == 'post':
             resp = self.api.post(url, self.serialize(dict_info))
@@ -118,13 +112,13 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         return resp
 
     def _create_rest_response(self, statuscode=requests.codes.no_content,
-                               resp='OK', errorcode='0', errormsg=None):
+                              resp='OK', errorcode='0', errormsg=None):
         response = mock.Mock(status_code=statuscode)
         response.response = resp
         response.errorcode = errorcode
         response.content = jsonutils.dumps({'result': resp,
-                                           'errorCode': errorcode,
-                                           'errorMsg': errormsg}, indent=2)
+                                            'errorCode': errorcode,
+                                            'errorMsg': errormsg}, indent=2)
         return response
 
     def test_create_router(self):
@@ -141,111 +135,114 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
     def test_create_router_success(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
 
         router_in = {'id': fake_router_db['id'],
-                      'name': fake_router_db['name'],
-                      'adminStateUp': fake_router_db['admin_state_up'],
-                      'tenantId': fake_router_db['tenant_id'],
-                      'externalGatewayInfo':
-                          fake_router_db['external_gateway_info'],
-                      'distributed': fake_router_db['distributed'],
-                      'ha': fake_router_db['ha'],
-                      'routes': fake_router_db['routes']}
+                     'name': fake_router_db['name'],
+                     'adminStateUp': fake_router_db['admin_state_up'],
+                     'tenantId': fake_router_db['tenant_id'],
+                     'externalGatewayInfo': fake_router_db[
+                         'external_gateway_info'],
+                     'distributed': fake_router_db['distributed'],
+                     'ha': fake_router_db['ha'],
+                     'routes': fake_router_db['routes']}
 
         body = {'router': router_in}
 
         response = self._create_rest_response(requests.codes.all_good)
 
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value=response) as mock_method:
-            with mock.patch.object(L3_NAT_db_mixin, 'create_router', return_value=fake_router_db) as mock_method1:
+        with mock.patch.object(ac_rest.RestClient, 'process_request',
+                               return_value=response) as mock_method:
+            with mock.patch.object(L3_NAT_db_mixin, 'create_router',
+                                   return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.create_router(context, router_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES['create_router']['rsrc']
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
+                  + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL \
+                  + '/' \
+                  + ac_const.AC_NEUTRON_RESOURCES['create_router']['rsrc']
         params = jsonutils.dumps(body)
-        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['create_router']['method'], tst_url, fake_rest_headers, params)
+        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES
+                                            ['create_router']['method'],
+                                            tst_url, fake_rest_headers, params)
 
     def test_create_router_no_content(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
 
         router_in = {'id': fake_router_db['id'],
-                      'name': fake_router_db['name'],
-                      'adminStateUp': fake_router_db['admin_state_up'],
-                      'tenantId': fake_router_db['tenant_id'],
-                      'externalGatewayInfo':
-                          fake_router_db['external_gateway_info'],
-                      'distributed': fake_router_db['distributed'],
-                      'ha': fake_router_db['ha'],
-                      'routes': fake_router_db['routes']}
+                     'name': fake_router_db['name'],
+                     'adminStateUp': fake_router_db['admin_state_up'],
+                     'tenantId': fake_router_db['tenant_id'],
+                     'externalGatewayInfo':
+                         fake_router_db['external_gateway_info'],
+                     'distributed': fake_router_db['distributed'],
+                     'ha': fake_router_db['ha'],
+                     'routes': fake_router_db['routes']}
 
         body = {'router': router_in}
 
         response = self._create_rest_response(requests.codes.no_content)
 
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value=response) as mock_method:
-            with mock.patch.object(L3_NAT_db_mixin, 'create_router', return_value=fake_router_db) as mock_method1:
+        with mock.patch.object(ac_rest.RestClient,
+                               'process_request',
+                               return_value=response) as mock_method:
+            with mock.patch.object(L3_NAT_db_mixin,
+                                   'create_router',
+                                   return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.create_router(context, router_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES['create_router']['rsrc']
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
+                  + str(cfg.CONF.ml2_huawei_ac.port) \
+                  + ac_const.AC_URL + '/' \
+                  + ac_const.AC_NEUTRON_RESOURCES[
+                      'create_router']['rsrc']
         params = jsonutils.dumps(body)
-        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['create_router']['method'], tst_url, fake_rest_headers, params)
+        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES
+                                            ['create_router']['method'],
+                                            tst_url,
+                                            fake_rest_headers, params)
 
     def test_create_router_failure(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
-
-        router_in = {'id': fake_router_db['id'],
-                      'name': fake_router_db['name'],
-                      'adminStateUp': fake_router_db['admin_state_up'],
-                      'tenantId': fake_router_db['tenant_id'],
-                      'externalGatewayInfo':
-                          fake_router_db['external_gateway_info'],
-                      'distributed': fake_router_db['distributed'],
-                      'ha': fake_router_db['ha'],
-                      'routes': fake_router_db['routes']}
-
-        body = {'router': router_in}
 
         response = self._create_rest_response(requests.codes.bad_gateway)
 
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value=response) as mock_method:
-            with mock.patch.object(L3_NAT_db_mixin, 'create_router', return_value=fake_router_db) as mock_method1:
+        with mock.patch.object(ac_rest.RestClient, 'process_request',
+                               return_value=response):
+            with mock.patch.object(L3_NAT_db_mixin,
+                                   'create_router',
+                                   return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
                 self.assertRaises(Exception, acl3router.create_router,
-                              context, router_info)
+                                  context, router_info)
 
     def test_create_router_failure_with_errorcode(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
-
-        router_in = {'id': fake_router_db['id'],
-                      'name': fake_router_db['name'],
-                      'adminStateUp': fake_router_db['admin_state_up'],
-                      'tenantId': fake_router_db['tenant_id'],
-                      'externalGatewayInfo':
-                          fake_router_db['external_gateway_info'],
-                      'distributed': fake_router_db['distributed'],
-                      'ha': fake_router_db['ha'],
-                      'routes': fake_router_db['routes']}
-
-        body = {'router': router_in}
 
         response = self._create_rest_response(requests.codes.ok, 'OK', '1')
 
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value=response) as mock_method:
-            with mock.patch.object(L3_NAT_db_mixin, 'create_router', return_value=fake_router_db) as mock_method1:
+        with mock.patch.object(ac_rest.RestClient, 'process_request',
+                               return_value=response):
+            with mock.patch.object(L3_NAT_db_mixin,
+                                   'create_router',
+                                   return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
-                self.assertRaises(Exception, acl3router.create_router,
-                              context, router_info)
+                self.assertRaises(Exception,
+                                  acl3router.create_router,
+                                  context, router_info)
 
     def test_update_router(self):
         router_info = copy.deepcopy(fake_router_object['router'])
@@ -269,33 +266,50 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
     def test_delete_router_success(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
         response = self._create_rest_response(requests.codes.all_good)
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value=response) as mock_method:
-            with mock.patch.object(L3_HA_NAT_db_mixin, 'delete_router', return_value=fake_router_db) as mock_method1:
+        with mock.patch.object(ac_rest.RestClient, 'process_request',
+                               return_value=response) as mock_method:
+            with mock.patch.object(L3_HA_NAT_db_mixin, 'delete_router',
+                                   return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.delete_router(context, fake_router_db['id'])
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] + '/' + fake_router_db['id']
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
+                  + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
+                  ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] \
+                  + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
-        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['delete_router']['method'], tst_url, fake_rest_headers, params)
+        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES
+                                            ['delete_router']['method'],
+                                            tst_url,
+                                            fake_rest_headers, params)
 
     def test_delete_router_direct_failure(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
 
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value="Timeout Exceptions") as mock_method:
-            with mock.patch.object(L3_HA_NAT_db_mixin, 'delete_router', return_value=fake_router_db) as mock_method1:
+        with mock.patch.object(ac_rest.RestClient, 'process_request',
+                               return_value="Timeout Exceptions") \
+                as mock_method:
+            with mock.patch.object(L3_HA_NAT_db_mixin, 'delete_router',
+                                   return_value=fake_router_db):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.delete_router(context, fake_router_db['id'])
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] + '/' + fake_router_db['id']
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
+                  + str(cfg.CONF.ml2_huawei_ac.port) \
+                  + ac_const.AC_URL + '/' + \
+                  ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] \
+                  + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
-        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['delete_router']['method'], tst_url, fake_rest_headers, params)
+        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES
+                                            ['delete_router']['method'],
+                                            tst_url, fake_rest_headers, params)
 
     def test_add_router_interface(self):
         interface_info = {'tenant_id': fake_tenant_id,
@@ -314,30 +328,44 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
     def test_add_router_interface_success(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
 
         interface_info = {'port_id': fake_port_id}
 
         router_in = {'portId': interface_info['port_id'],
-                'routerId': fake_router_db['id'],
-                'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
-                'tenantId': router_info['router']['tenant_id']}
+                     'routerId': fake_router_db['id'],
+                     'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
+                     'tenantId': router_info['router']['tenant_id']}
 
         body = {'routerInterface': router_in}
 
         response = self._create_rest_response(requests.codes.all_good)
 
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value=response) as mock_method:
-            with mock.patch.object(L3_NAT_db_mixin, 'get_router', return_value=fake_router_db) as mock_method1:
-                with mock.patch.object(L3_NAT_with_dvr_db_mixin, 'add_router_interface', return_value=interface_info) as mock_method2:
+        with mock.patch.object(ac_rest.RestClient, 'process_request',
+                               return_value=response) as mock_method:
+            with mock.patch.object(L3_NAT_db_mixin, 'get_router',
+                                   return_value=fake_router_db):
+                with mock.patch.object(L3_NAT_with_dvr_db_mixin,
+                                       'add_router_interface',
+                                       return_value=interface_info):
                     acl3router = HuaweiACL3RouterPlugin()
-                    acl3router.add_router_interface(context, fake_router_db['id'], interface_info)
+                    acl3router.add_router_interface(context,
+                                                    fake_router_db['id'],
+                                                    interface_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES['add_router_interface']['rsrc'] + '/' + fake_router_db['id']
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
+                  + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL \
+                  + '/' \
+                  + ac_const.AC_NEUTRON_RESOURCES[
+                      'add_router_interface']['rsrc'] \
+                  + '/' \
+                  + fake_router_db['id']
         params = jsonutils.dumps(body)
-        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['add_router_interface']['method'], tst_url, fake_rest_headers, params)
+        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES
+                                            ['add_router_interface']['method'],
+                                            tst_url, fake_rest_headers, params)
 
     def test_remove_router_interface(self):
         interface_info = {'tenant_id': fake_tenant_id,
@@ -355,28 +383,45 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
     def test_remove_router_interface_success(self):
         router_info = copy.deepcopy(fake_router_object)
-        router_info['router'].update({'status': 'ACTIVE', 'id': fake_router_uuid})
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
         context = mock.Mock(current=fake_router_object)
 
         interface_info = {'port_id': fake_port_id}
 
         router_in = {'portId': interface_info['port_id'],
-                'id': fake_router_db['id'],
-                'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
-                'tenantId': router_info['router']['tenant_id']}
+                     'id': fake_router_db['id'],
+                     'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
+                     'tenantId': router_info['router']['tenant_id']
+                     }
 
         response = self._create_rest_response(requests.codes.all_good)
 
-        with mock.patch.object(ac_rest.RestClient, 'process_request', return_value=response) as mock_method:
-            with mock.patch.object(L3_NAT_db_mixin, 'get_router', return_value=fake_router_db) as mock_method1:
-                with mock.patch.object(L3_NAT_with_dvr_db_mixin, 'remove_router_interface', return_value=interface_info) as mock_method2:
+        with mock.patch.object(ac_rest.RestClient, 'process_request',
+                               return_value=response) \
+                as mock_method:
+            with mock.patch.object(L3_NAT_db_mixin, 'get_router',
+                                   return_value=fake_router_db):
+                with mock.patch.object(L3_NAT_with_dvr_db_mixin,
+                                       'remove_router_interface',
+                                       return_value=interface_info):
                     acl3router = HuaweiACL3RouterPlugin()
-                    acl3router.remove_router_interface(context, fake_router_db['id'], interface_info)
+                    acl3router.remove_router_interface(context,
+                                                       fake_router_db['id'],
+                                                       interface_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES['delete_router_interface']['rsrc'] + '/' + fake_router_db['id']
+        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
+                  + str(cfg.CONF.ml2_huawei_ac.port) \
+                  + ac_const.AC_URL + '/' \
+                  + ac_const.AC_NEUTRON_RESOURCES['delete_router_interface']['rsrc'] \
+                  + '/' + fake_router_db['id']
         params = jsonutils.dumps(router_in)
-        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES['delete_router_interface']['method'], tst_url, fake_rest_headers, params)
+        mock_method.assert_called_once_with(ac_const.AC_NEUTRON_RESOURCES
+                                            ['delete_router_interface']
+                                            ['method'],
+                                            tst_url,
+                                            fake_rest_headers,
+                                            params)
 
     def _verify_resp(self, resp, return_code, context, id):
         self.assertEqual(resp.status_int, return_code)
@@ -393,9 +438,6 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         if context == 'router':
             self.assertEqual(resource['status'], 'ACTIVE')
             self.assertEqual(resource['admin_state_up'], True)
-        elif context == 'floatingip':
-            self.assertEqual(resource['status'], 'ACTIVE')
-            self.assertEqual(resource['fixed_ip_address'], None)
 
     def test_get_plugin_type(self):
         acl3router = HuaweiACL3RouterPlugin()
