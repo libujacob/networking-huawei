@@ -30,10 +30,12 @@ if is_service_enabled huawei-ac; then
         echo "Stop Huawei AC"
         cd $DIR_HUAWEI
         sudo pip uninstall -q -y networking-huawei
-        sudo rm -r build networking_huawei.egg-info
+        sudo rm -rf build networking_huawei.egg-info
     fi
 
     if [[ "$1" == "clean" ]]; then
-        :
+        cd $DEST
+        sudo rm -rf networking_huawei
+
     fi
 fi
