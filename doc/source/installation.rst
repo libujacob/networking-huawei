@@ -1,9 +1,10 @@
-============
+************
 Installation
-============
+************
 
 1. General
-----------
+##########
+
 This guide will help you to install networking_huawei plugin for openstack to communicate with Huawei Agile Controller 2.0.
 
 This guide does not necessarily cover all OpenStack installation steps especially at production scale. Plugin only supported for OpenStack Liberty and master versions.
@@ -11,22 +12,24 @@ This guide does not necessarily cover all OpenStack installation steps especiall
 There must be an Agile Controller 2.0 running in a machine which is reachable from the Neutron Server.
 
 2. Networking-huawei plugin installation
-----------------------------------------
+########################################
 
-:2.1 DevStack deployment:
+2.1 DevStack deployment
+***********************
 
-     1. Download the DevStack "git clone https://git.openstack.org/openstack-dev/devstack".
-     2. Create user stack "devstack/tools/create-stack-user.sh; su stack".
-     3. Move inside the DevStack "cd devstack".
-     4. Add networking huawei plugin to the "local.conf/localrc" file "enable_plugin networking-huawei https://github.com/openstack/networking-huawei.git master".
-     5. Update the configuration of AC in "local.conf/localrc" file under "ml2_huawei" namespace.
-     6. Else, download the plugin code "git clone https://github.com/openstack/networking-huawei.git" and copy the "local.conf.sample" file to "devstack" and rename it as "local.conf".
-     7. Update the "etc/neutron/huawei_ac_config.ini" file with host, port and other AC configurations.
-     8. Start the DevStack "./stack.sh".
+     1. Download the DevStack *"git clone https://git.openstack.org/openstack-dev/devstack"*.
+     2. Create user stack *"devstack/tools/create-stack-user.sh; su stack"*.
+     3. Move inside the DevStack *"cd devstack"*.
+     4. Add networking huawei plugin to the *local.conf/localrc* file *"enable_plugin networking-huawei https://github.com/openstack/networking-huawei.git master"*.
+     5. Update the configuration of AC in *local.conf/localrc* file under *ml2_huawei* namespace.
+     6. Else, download the plugin code *"git clone https://github.com/openstack/networking-huawei.git"* and copy *local.conf.sample* file to *devstack* folder and rename it as *local.conf*.
+     7. Update the *etc/neutron/huawei_ac_config.ini* file with host, port and other AC configurations.
+     8. Start the DevStack *"./stack.sh"*.
 
-:2.2 Setup where OpenStack Controller is already deployed:
+2.2 Setup where OpenStack Controller is already deployed
+********************************************************
 
-     1. Install the plugin "pip install git+git://git.openstack.org/openstack/networking-huawei".
+     1. Install the plugin *"pip install git+git://git.openstack.org/openstack/networking-huawei"*.
      2. Update /etc/neutron/plugins/ml2/ml2_conf.ini for L2 plugin.
      ::
 
