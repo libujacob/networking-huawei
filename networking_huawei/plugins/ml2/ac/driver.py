@@ -276,7 +276,6 @@ def rest_request(id, entry_info, operation):
         url = '%s%s%s' % (ac_const.AC_URL, '/',
                           ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc'])
         service = RESTService()
-        isneedservicename = False
 
         LOG.debug("The ac data is: %s.", jsonutils.dumps(entry_info))
         try:
@@ -287,7 +286,7 @@ def rest_request(id, entry_info, operation):
                                        url,
                                        id,
                                        entry_info,
-                                       isneedservicename,
+                                       False,
                                        default_security_group_rest_callback)
                 if default_security_group_sync:
                     default_security_groups \
@@ -302,7 +301,7 @@ def rest_request(id, entry_info, operation):
                                        url,
                                        id,
                                        entry_info,
-                                       isneedservicename,
+                                       False,
                                        rest_callback)
         except Exception as e:
             LOG.error(_LE("Exception is %s."), e)
