@@ -64,7 +64,7 @@ def create_security_group(resource, event, trigger, **kwargs):
             sg_group['security_group_rules']
     except Exception:
         LOG.warning(_LW("The SG group does not exist."))
-    security_group_info = {}
+
     security_group_info = _set_security_group(security_group)
     LOG.debug("The security group_info is %s.",
               security_group_info)
@@ -103,7 +103,6 @@ def update_security_group(resource, event, trigger, **kwargs):
     """
 
     security_group = kwargs['security_group']
-    security_group_info = {}
     security_group_info = _set_security_group(security_group)
     LOG.debug("The group is %s.", security_group_info)
     try:
@@ -149,7 +148,6 @@ def create_security_group_rule(resource, event, trigger, **kwargs):
     """
 
     rule = kwargs['security_group_rule']
-    rule_info = {}
     rule_info = _set_security_group_rule(rule)
     LOG.debug("The group rule is %s.", rule_info)
     try:
