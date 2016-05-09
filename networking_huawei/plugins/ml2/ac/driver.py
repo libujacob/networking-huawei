@@ -276,8 +276,8 @@ def rest_request(id, entry_info, operation):
 
     if operation in ac_const.AC_NEUTRON_RESOURCES:
         methodname = ac_const.AC_NEUTRON_RESOURCES[operation]['method']
-        url = ac_const.AC_URL + '/' + ac_const.AC_NEUTRON_RESOURCES[operation][
-            'rsrc']
+        url = '%s%s%s' % (ac_const.AC_URL, '/',
+                          ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc'])
         service = RESTService()
         isneedservicename = False
 
@@ -632,8 +632,8 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
             isneedservicename = \
                 ac_const.AC_NEUTRON_RESOURCES[operation]['needSvcNameUpdate']
             methodname = ac_const.AC_NEUTRON_RESOURCES[operation]['method']
-            url = ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc']
+            url = '%s%s%s' % (ac_const.AC_URL, '/',
+                              ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc'])
 
             service = RESTService()
             service.requestService(methodname,

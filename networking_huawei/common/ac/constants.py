@@ -76,10 +76,12 @@ AC_NEUTRON_RESOURCES = {'create_network': {'rsrc': AC_NETWORKS,
                                           'method': 'DELETE',
                                           'needSvcNameUpdate': False},
                         'add_router_interface': {
-                            'rsrc': AC_ROUTER_IF + '/add_router_interface',
+                            'rsrc': '%s%s' % (AC_ROUTER_IF,
+                                              '/add_router_interface'),
                             'method': 'PUT', 'needSvcNameUpdate': False},
                         'delete_router_interface': {
-                            'rsrc': AC_ROUTER_IF + '/remove_router_interface',
+                            'rsrc': '%s%s' % (AC_ROUTER_IF,
+                                              '/remove_router_interface'),
                             'method': 'PUT', 'needSvcNameUpdate': False}}
 
 AC_L3_DESCRIPTION = "Huawei L3 Router Service Plugin for basic L3 forwarding" \

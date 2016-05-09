@@ -41,7 +41,7 @@ class RestClient(object):
 
         if method.upper() == 'GET' or method.upper() == 'DELETE' \
                 or method.upper() == 'PUT':
-            url = url + "/" + resrc_id
+            url = '%s%s%s' % (url, "/", resrc_id)
         else:
             pass
 

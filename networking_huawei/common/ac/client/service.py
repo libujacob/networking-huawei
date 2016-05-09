@@ -31,7 +31,7 @@ class RESTService(object):
         self.host = cfg.CONF.ml2_huawei_ac.host
         self.port = cfg.CONF.ml2_huawei_ac.port
         self.serviceName = cfg.CONF.ml2_huawei_ac.service_name
-        self.url = "http://" + self.host + ":" + str(self.port)
+        self.url = '%s%s%s%s' % ("http://", self.host, ":", str(self.port))
 
     def requestREST(self, method, url, id, body,
                     callBack=None):
@@ -59,7 +59,7 @@ class RESTService(object):
                 body[key]["serviceName"] = self.serviceName
         self.__requestServiceParams__ = {
             "method": method,
-            "url": self.url + url,
+            "url": '%s%s' % (self.url, url),
             "body": body,
             "id": id,
             "callBack": callBack

@@ -161,8 +161,8 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
     def __rest_request__(self, res_id, entry_info, operation):
         if operation in ac_const.AC_NEUTRON_RESOURCES:
             methodname = ac_const.AC_NEUTRON_RESOURCES[operation]['method']
-            url = ac_const.AC_URL + '/' + \
-                ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc']
+            url = '%s%s%s' % (ac_const.AC_URL, '/',
+                              ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc'])
             service = RESTService()
             service.requestService(methodname, url, res_id,
                                    entry_info, False, self.__callBack__)
