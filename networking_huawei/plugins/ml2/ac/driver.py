@@ -407,18 +407,23 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
 
     def __setNetWorkInfo__(self, context):
         LOG.debug("The context current in network is %s.", context.current)
-        network_info = {'id': context.current['id'],
-                        'status': context.current['status'],
-                        'segmentationId': context.current[
-                            'provider:segmentation_id'],
-                        'tenantId': context.current['tenant_id'],
-                        'name': context.current['name'],
-                        'adminStateUp': context.current['admin_state_up'],
-                        'shared': context.current['shared'],
-                        'networkType':
-                            context.current['provider:network_type'],
-                        'physicalNetwork': context.current[
-                            'provider:physical_network']}
+        try:
+            network_info = {'id': context.current['id'],
+                            'status': context.current['status'],
+                            'segmentationId': context.current[
+                                'provider:segmentation_id'],
+                            'tenantId': context.current['tenant_id'],
+                            'name': context.current['name'],
+                            'adminStateUp': context.current['admin_state_up'],
+                            'shared': context.current['shared'],
+                            'networkType':
+                                context.current['provider:network_type'],
+                            'physicalNetwork': context.current[
+                                'provider:physical_network']}
+        except KeyError as e:
+            LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
+            raise KeyError
+
         if 'router:external' in context.current \
                 and context.current['router:external']:
             network_info['routerExternal'] = True
@@ -463,23 +468,30 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
 
     def __setSubNetinfo__(self, context):
         LOG.debug("The context current in subnet is %s.", context.current)
+        try:
+            subnet_info = {'networkId': context.current['network_id'],
+                           'tenantId': context.current['tenant_id'],
+                           'id': context.current['id'],
+                           'name': context.current['name'],
+                           'ipVersion': context.current['ip_version'],
+                           'enableDhcp': context.current['enable_dhcp'],
+                           'allocationPools':
+                               context.current['allocation_pools'],
+                           'cidr': context.current['cidr'],
+                           'gatewayIp': context.current['gateway_ip'],
+                           'dnsNameservers':
+                               context.current['dns_nameservers'],
+                           'hostRoutes': context.current['host_routes']}
 
-        subnet_info = {'networkId': context.current['network_id'],
-                       'tenantId': context.current['tenant_id'],
-                       'id': context.current['id'],
-                       'name': context.current['name'],
-                       'ipVersion': context.current['ip_version'],
-                       'enableDhcp': context.current['enable_dhcp'],
-                       'allocationPools': context.current['allocation_pools'],
-                       'cidr': context.current['cidr'],
-                       'gatewayIp': context.current['gateway_ip'],
-                       'dnsNameservers': context.current['dns_nameservers'],
-                       'hostRoutes': context.current['host_routes']}
-        subnet_info_list = {}
-        if q_const.IP_VERSION_6 == context.current['ip_version']:
-            subnet_info['ipv6AddressMode'] \
-                = context.current['ipv6_address_mode']
-            subnet_info['ipv6RaMode'] = context.current['ipv6_ra_mode']
+            subnet_info_list = {}
+            if q_const.IP_VERSION_6 == context.current['ip_version']:
+                subnet_info['ipv6AddressMode'] \
+                    = context.current['ipv6_address_mode']
+                subnet_info['ipv6RaMode'] = context.current['ipv6_ra_mode']
+
+        except KeyError as e:
+            LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
+            raise KeyError
 
         LOG.debug("The subnet_info is %s.", subnet_info)
         subnet_info_list['subnet'] = subnet_info
@@ -510,12 +522,23 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         :param context: DB context for the port delete
         :return: None
         """
-        port_info = self.__setPortinfo__(context)
+
+        try:
+            port_info = self.__setPortinfo__(context)
+        except KeyError as e:
+            LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
+            raise KeyError
+
         self.__restRequest__(port_info['port']['id'], port_info, 'delete_port')
 
     def __deal_port__(self, context, operation):
         LOG.debug("The context current in port is %s.", context.current)
-        port_info = self.__setPortinfo__(context)
+        try:
+            port_info = self.__setPortinfo__(context)
+        except KeyError as e:
+            LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
+            raise KeyError
+
         # if the port bind default security group and not sync to ac,
         # it need to be sync to ac
         if operation == 'create_port':

@@ -13,6 +13,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from networking_huawei._i18n import _LE
 from networking_huawei._i18n import _LI
 from networking_huawei.common.ac.client.service import RESTService
 from networking_huawei.common.ac.config import config  # noqa
@@ -86,15 +87,19 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
             .create_router(context, router)
         LOG.debug('Create router db %s.', router_db)
 
-        routerinfo = {'id': router_db['id'],
-                      'name': router_db['name'],
-                      'adminStateUp': router_db['admin_state_up'],
-                      'tenantId': router_db['tenant_id'],
-                      'externalGatewayInfo':
-                          router_db['external_gateway_info'],
-                      'distributed': router_db['distributed'],
-                      'ha': router_db['ha'],
-                      'routes': router_db['routes']}
+        try:
+            routerinfo = {'id': router_db['id'],
+                          'name': router_db['name'],
+                          'adminStateUp': router_db['admin_state_up'],
+                          'tenantId': router_db['tenant_id'],
+                          'externalGatewayInfo':
+                              router_db['external_gateway_info'],
+                          'distributed': router_db['distributed'],
+                          'ha': router_db['ha'],
+                          'routes': router_db['routes']}
+        except KeyError as e:
+            LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
+            raise KeyError
 
         info = {'router': routerinfo}
         self.__rest_request__("", info, 'create_router')
@@ -113,10 +118,14 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
 
         service_name = service.serviceName
         rest_info = {}
-        info = {'portId': interface_info['port_id'],
-                'routerId': router_id,
-                'serviceName': service_name,
-                'tenantId': router['tenant_id']}
+        try:
+            info = {'portId': interface_info['port_id'],
+                    'routerId': router_id,
+                    'serviceName': service_name,
+                    'tenantId': router['tenant_id']}
+        except KeyError as e:
+            LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
+            raise KeyError
 
         rest_info['routerInterface'] = info
 
@@ -129,10 +138,14 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
         service = RESTService()
         service_name = service.serviceName
 
-        rest_info = {'portId': interface_info['port_id'],
-                     'id': router_id,
-                     'serviceName': service_name,
-                     'tenantId': router['tenant_id']}
+        try:
+            rest_info = {'portId': interface_info['port_id'],
+                         'id': router_id,
+                         'serviceName': service_name,
+                         'tenantId': router['tenant_id']}
+        except KeyError as e:
+            LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
+            raise KeyError
 
         self.__rest_request__(router_id, rest_info, 'delete_router_interface')
         super(HuaweiACL3RouterPlugin, self)\
