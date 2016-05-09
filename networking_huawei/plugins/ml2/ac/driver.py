@@ -222,9 +222,8 @@ def delete_snat(resource, event, trigger, **kwargs):
     """
 
     router_id = kwargs['router_id']
-    id = router_id
     try:
-        rest_request(id, {}, 'delete_snat')
+        rest_request(router_id, {}, 'delete_snat')
     except Exception:
         LOG.error(_LE("Delete SNAT failed."))
     LOG.debug("End delete SNAT.")
