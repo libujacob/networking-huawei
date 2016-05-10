@@ -854,12 +854,6 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         except Exception:
             pass
 
-    def test_setMacFormat_(self):
-        try:
-            self.__setMacFormat__("0a-1b-3c-4d-5e-6f")
-        except Exception:
-            pass
-
     # # passed
     def test_create_security_group_rule_rollback(self):
         resp = self._mock_req_resp(requests.codes.all_good)

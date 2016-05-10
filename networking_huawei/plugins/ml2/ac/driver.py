@@ -32,7 +32,6 @@ from neutron_lib import constants as q_const
 from oslo_log import helpers as log_helpers
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
-import re
 import requests
 
 LOG = logging.getLogger(__name__)
@@ -646,12 +645,6 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         else:
             LOG.debug("Raise mechanism driver error.")
             raise ml2_exc.MechanismDriverError(method='__callBack__')
-
-    def __setMacFormat__(self, mac_address):
-        pureMac = re.sub("[^a-zA-Z0-9]", "", mac_address)
-        tmpMac = re.findall(r'.{4}', pureMac)
-        macReturn = '-'.join(tmpMac)
-        return macReturn
 
     @log_helpers.log_method_call
     def __restRequestError__(self, errorCode, reason):
