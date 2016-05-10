@@ -92,12 +92,12 @@ class RESTService(object):
     def reportOpenstackName(self):
 
         openstackInfo = {
-            'neutron_name': cfg.CONF.ml2_huawei_ac.ac_neutron_name,
-            'neutron_ip': cfg.CONF.ml2_huawei_ac.ac_neutron_ip
+            'neutron_name': cfg.CONF.ml2_huawei_ac.neutron_name,
+            'neutron_ip': cfg.CONF.ml2_huawei_ac.neutron_ip
         }
 
         body = {
-            "neutron_name": cfg.CONF.ml2_huawei_ac.ac_neutron_name,
+            "neutron_name": cfg.CONF.ml2_huawei_ac.neutron_name,
             "neutron_ac_data": openstackInfo
         }
 
