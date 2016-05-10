@@ -228,6 +228,21 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                   acl3router.create_router,
                                   context, router_info)
 
+    def test_create_router_key_error_exception(self):
+        router_info = copy.deepcopy(fake_router_object)
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
+        context = mock.Mock(current=fake_router_object)
+        del fake_router_db['tenant_id']
+        with mock.patch.object(L3_NAT_db_mixin,
+                               'create_router',
+                               return_value=fake_router_db):
+            acl3router = HuaweiACL3RouterPlugin()
+            self.assertRaises(KeyError,
+                              acl3router.create_router,
+                              context, router_info)
+        fake_router_db.update({'tenant_id': fake_tenant_id})
+
     def test_create_router_failure_with_errorcode(self):
         router_info = copy.deepcopy(fake_router_object)
         router_info['router'].update({'status': 'ACTIVE',
@@ -369,6 +384,50 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                             ['add_router_interface']['method'],
                                             tst_url, fake_rest_headers, params)
 
+    def test_add_router_interface_key_error_exception(self):
+        router_info = copy.deepcopy(fake_router_object)
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
+        context = mock.Mock(current=fake_router_object)
+
+        interface_info = {'port_id': fake_port_id}
+
+        del interface_info['port_id']
+
+        with mock.patch.object(L3_NAT_db_mixin, 'get_router',
+                               return_value=fake_router_db):
+            with mock.patch.object(L3_NAT_with_dvr_db_mixin,
+                                   'add_router_interface',
+                                   return_value=interface_info):
+                acl3router = HuaweiACL3RouterPlugin()
+                self.assertRaises(KeyError,
+                                  acl3router.add_router_interface,
+                                  context,
+                                  fake_router_db['id'],
+                                  interface_info)
+
+    def test_remove_router_interface_key_error_exception(self):
+        router_info = copy.deepcopy(fake_router_object)
+        router_info['router'].update({'status': 'ACTIVE',
+                                      'id': fake_router_uuid})
+        context = mock.Mock(current=fake_router_object)
+
+        interface_info = {'port_id': fake_port_id}
+
+        del interface_info['port_id']
+
+        with mock.patch.object(L3_NAT_db_mixin, 'get_router',
+                               return_value=fake_router_db):
+            with mock.patch.object(L3_NAT_with_dvr_db_mixin,
+                                   'add_router_interface',
+                                   return_value=interface_info):
+                acl3router = HuaweiACL3RouterPlugin()
+                self.assertRaises(KeyError,
+                                  acl3router.remove_router_interface,
+                                  context,
+                                  fake_router_db['id'],
+                                  interface_info)
+
     def test_remove_router_interface(self):
         interface_info = {'tenant_id': fake_tenant_id,
                           'id': fake_router_uuid}
@@ -447,3 +506,11 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         self.assertEqual(plugin_type, constants.L3_ROUTER_NAT)
         plugin_desc = acl3router.get_plugin_description()
         self.assertEqual(plugin_desc, ac_const.AC_L3_DESCRIPTION)
+
+    def test_rest_request_error_case(self):
+        acl3router = HuaweiACL3RouterPlugin()
+        self.assertRaises(ml2_exc.MechanismDriverError,
+                          acl3router.__rest_request__,
+                          None,
+                          None,
+                          'invalid_operation')

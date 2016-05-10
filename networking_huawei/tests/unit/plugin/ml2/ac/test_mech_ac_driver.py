@@ -411,7 +411,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 **kwargs)
 
     def _test_response_sg(self, context, oper_type,
-                          obj_type, mock_method, any=False):
+                          obj_type, mock_method):
         body = '{}'
         url = ""
         append_url = "controller/dc/esdk/v2.0/"
@@ -460,22 +460,13 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 jsonutils.dumps({obj_type: data_network})
 
         kwargs = {'url': url, 'data': body}
-        if not any:
-            mock_method.assert_called_once_with(
-                oper_type,
-                headers={'Content-type': 'application/json',
-                         'Accept': 'application/json'},
-                timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
-                verify=False,
-                **kwargs)
-        else:
-            mock_method.assert_any_call(
-                oper_type,
-                headers={'Content-type': 'application/json',
-                         'Accept': 'application/json'},
-                timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
-                verify=False,
-                **kwargs)
+        mock_method.assert_called_once_with(
+            oper_type,
+            headers={'Content-type': 'application/json',
+                     'Accept': 'application/json'},
+            timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
+            verify=False,
+            **kwargs)
 
     def test_create_network_postcommit(self):
         context = mock.Mock(current=test_network_object_sent)
@@ -793,11 +784,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         with mock.patch.object(huawei_ml2_driver, 'rest_request',
                                return_value=resp) as mock_method:
             mock_method.side_effect = Exception(mock.Mock(msg="exceptions"))
-            try:
-                huawei_ml2_driver.delete_security_group_rule(
-                    None, None, None, **kwargs)
-            except Exception:
-                pass
+            huawei_ml2_driver.delete_security_group_rule(
+                None, None, None, **kwargs)
 
     def test_delete_snat(self):
         resp = self._mock_req_resp(requests.codes.all_good)
