@@ -27,6 +27,7 @@ from neutron import context
 from neutron.db import common_db_mixin
 from neutron.db import securitygroups_db as sg_db
 from neutron.extensions import portbindings
+from neutron.plugins.common import constants as n_const
 from neutron.plugins.ml2 import driver_api as api
 from neutron_lib import constants as q_const
 from oslo_log import helpers as log_helpers
@@ -545,11 +546,29 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         :return: None
         """
         for segment in context.segments_to_bind:
-            context._new_bound_segment = segment[api.ID]
-            vif_details = {portbindings.OVS_HYBRID_PLUG: True}
-            context.set_binding(segment[api.ID],
-                                'ovs',
-                                vif_details)
+            if self.check_segment(segment):
+                context._new_bound_segment = segment[api.ID]
+                vif_details = {portbindings.OVS_HYBRID_PLUG: True}
+                context.set_binding(segment[api.ID],
+                                    'ovs',
+                                    vif_details)
+            else:
+                LOG.debug("Port bound un-successfull for segment ID %(id)s, "
+                          "segment %(seg)s, phys net %(physnet)s, and "
+                          "network type %(nettype)s",
+                          {'id': segment[api.ID],
+                           'seg': segment[api.SEGMENTATION_ID],
+                           'physnet': segment[api.PHYSICAL_NETWORK],
+                           'nettype': segment[api.NETWORK_TYPE]})
+
+    @log_helpers.log_method_call
+    def check_segment(self, segment):
+        """Check whether segment is valid for the AC MechanismDriver."""
+
+        return segment[api.NETWORK_TYPE] in [n_const.TYPE_LOCAL,
+                                             n_const.TYPE_GRE,
+                                             n_const.TYPE_VXLAN,
+                                             n_const.TYPE_VLAN]
 
     def __setPortinfo__(self, context):
         LOG.debug("The context current in Port is %s.", context.current)
