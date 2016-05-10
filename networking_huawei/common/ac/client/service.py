@@ -18,7 +18,6 @@ from networking_huawei.common.ac.client.restclient import RestClient
 from oslo_config import cfg
 from oslo_log import log as logging
 from requests import codes as req_code
-import time
 
 OPEN_ID = ''
 
@@ -81,36 +80,3 @@ class RESTService(object):
             self.__requestServiceParams__['callBack'])
 
         return result
-
-    def __doRequestServiceError__(self, status, reason):
-
-        pass
-
-    def reportOpenstackName(self):
-
-        openstackInfo = {
-            'neutron_name': cfg.CONF.ml2_huawei_ac.neutron_name,
-            'neutron_ip': cfg.CONF.ml2_huawei_ac.neutron_ip
-        }
-
-        body = {
-            "neutron_name": cfg.CONF.ml2_huawei_ac.neutron_name,
-            "neutron_ac_data": openstackInfo
-        }
-
-        self.requestService(
-            "POST",
-            "/rest/openapi/AgileController/OpenSDK/openstackname",
-            {},
-            body,
-            self.__reportOpenstackNameSuccess__,
-            self.__reportOpenstackNameError__)
-
-    def __reportOpenstackNameSuccess__(self, data, status, reason):
-        pass
-
-    def __reportOpenstackNameError__(self, status, reason):
-
-        time.sleep(int(cfg.CONF.ml2_huawei_ac.ac_interval))
-
-        self.reportOpenstackName()
