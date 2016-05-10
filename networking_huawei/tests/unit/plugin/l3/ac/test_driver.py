@@ -143,7 +143,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         router_in = {'id': fake_router_db['id'],
                      'name': fake_router_db['name'],
                      'adminStateUp': fake_router_db['admin_state_up'],
-                     'tenantId': fake_router_db['tenant_id'],
+                     'tenant_id': fake_router_db['tenant_id'],
                      'externalGatewayInfo': fake_router_db[
                          'external_gateway_info'],
                      'distributed': fake_router_db['distributed'],
@@ -179,7 +179,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         router_in = {'id': fake_router_db['id'],
                      'name': fake_router_db['name'],
                      'adminStateUp': fake_router_db['admin_state_up'],
-                     'tenantId': fake_router_db['tenant_id'],
+                     'tenant_id': fake_router_db['tenant_id'],
                      'externalGatewayInfo':
                          fake_router_db['external_gateway_info'],
                      'distributed': fake_router_db['distributed'],
@@ -339,7 +339,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         router_in = {'portId': interface_info['port_id'],
                      'routerId': fake_router_db['id'],
                      'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
-                     'tenantId': router_info['router']['tenant_id']}
+                     'tenant_id': router_info['router']['tenant_id']}
 
         body = {'routerInterface': router_in}
 
@@ -394,7 +394,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         router_in = {'portId': interface_info['port_id'],
                      'id': fake_router_db['id'],
                      'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
-                     'tenantId': router_info['router']['tenant_id']
+                     'tenant_id': router_info['router']['tenant_id']
                      }
 
         response = self._create_rest_response(requests.codes.all_good)

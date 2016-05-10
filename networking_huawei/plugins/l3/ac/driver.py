@@ -91,7 +91,7 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
             routerinfo = {'id': router_db['id'],
                           'name': router_db['name'],
                           'adminStateUp': router_db['admin_state_up'],
-                          'tenantId': router_db['tenant_id'],
+                          'tenant_id': router_db['tenant_id'],
                           'externalGatewayInfo':
                               router_db['external_gateway_info'],
                           'distributed': router_db['distributed'],
@@ -122,7 +122,7 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
             info = {'portId': interface_info['port_id'],
                     'routerId': router_id,
                     'serviceName': service_name,
-                    'tenantId': router['tenant_id']}
+                    'tenant_id': router['tenant_id']}
         except KeyError as e:
             LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
             raise KeyError
@@ -142,7 +142,7 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
             rest_info = {'portId': interface_info['port_id'],
                          'id': router_id,
                          'serviceName': service_name,
-                         'tenantId': router['tenant_id']}
+                         'tenant_id': router['tenant_id']}
         except KeyError as e:
             LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
             raise KeyError

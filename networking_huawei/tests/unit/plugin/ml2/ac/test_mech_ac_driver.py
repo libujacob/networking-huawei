@@ -52,7 +52,7 @@ test_network_object_sent_missing_tenant_id = {'status': 'ACTIVE',
 test_network_object_receive = {"id": "d897e21a-dfd6-4331-a5dd-7524fa421c3e",
                                "status": "ACTIVE",
                                "segmentationId": None,
-                               "tenantId": "test-tenant",
+                               "tenant_id": "test-tenant",
                                "name": "net1",
                                "adminStateUp": True,
                                "shared": False,
@@ -65,7 +65,7 @@ test_network_object_receive_update = {"id": "d897e21a-dfd6-4331-"
                                             "a5dd-7524fa421c3e",
                                       "status": "ACTIVE",
                                       "segmentationId": None,
-                                      "tenantId": "test-tenant",
+                                      "tenant_id": "test-tenant",
                                       "name": "net1",
                                       "adminStateUp": True,
                                       "shared": False,
@@ -92,7 +92,7 @@ test_subnet_object_sent = {'ipv6_ra_mode': None,
                            'shared': False}
 
 test_subnet_object_receive = {'networkId': test_network_uuid,
-                              'tenantId': 'test-tenant',
+                              'tenant_id': 'test-tenant',
                               'id': test_subnet_uuid,
                               'name': '',
                               'ipVersion': 4,
@@ -106,7 +106,7 @@ test_subnet_object_receive = {'networkId': test_network_uuid,
                               "serviceName": "physnet1"}
 
 test_subnet_object_update = {'networkId': test_network_uuid,
-                             'tenantId': 'test-tenant',
+                             'tenant_id': 'test-tenant',
                              'id': test_subnet_uuid,
                              'name': '',
                              'ipVersion': 4,
@@ -161,7 +161,7 @@ test_port_object_receive = {"id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
                             "networkId": "d897e21a-dfd6-4331-a5dd-7524fa"
                                          "421c3e",
                             "macAddress": "12:34:56 :78:21:b6",
-                            "tenantId": "test-tenant",
+                            "tenant_id": "test-tenant",
                             "serviceName": "physnet1",
                             "profile": {"localLinkInformations": []},
                             "name": "",
@@ -174,7 +174,7 @@ test_port_object_receive_sg = {"id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
                                "serviceName": "physnet1",
                                "sercurityGroups": ["2f9244b4-9bee-"
                                                    "4e81-bc4a-3f3c2045b3d7"],
-                               "tenantId": "test-tenant",
+                               "tenant_id": "test-tenant",
                                "name": "",
                                "macAddress": "12:34:56 :78:21:b6",
                                "deviceOwner": "fake_owner",
@@ -184,8 +184,8 @@ test_port_object_receive_sg = {"id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
                                "4331-a5dd-7524fa421c3e",
                                "profile": {"localLinkInformations": []}}
 
-test_port_object_receive_sg_rule_list = {"tenantId": "e4f50856753b4d"
-                                                     "c6afee5fa6b9b6c550",
+test_port_object_receive_sg_rule_list = {"tenant_id": "e4f50856753b4d"
+                                                      "c6afee5fa6b9b6c550",
                                          "name": "new-webservers",
                                          "description": "security "
                                                         "group for webservers",
@@ -198,7 +198,7 @@ test_port_object_receive_update = {"id": "72c56c48-e9b8-4dcf-"
                                    "networkId": "d897e21a-dfd6-"
                                                 "4331-a5dd-7524fa421c3e",
                                    "macAddress": "12:34:56 :78:21:b6",
-                                   "tenantId": "test-tenant",
+                                   "tenant_id": "test-tenant",
                                    "profile": {"localLinkInformations": []},
                                    "name": "",
                                    "adminStateUp": True,
@@ -211,7 +211,7 @@ test_port_object_delete_update = {'id': "72c56c48-e9b8-"
                                   'name': "",
                                   'networkId': "d897e21a-dfd6-"
                                                "4331-a5dd-7524fa421c3e",
-                                  'tenantId': "test-tenant",
+                                  'tenant_id': "test-tenant",
                                   'hostId': "ubuntu",
                                   'macAddress': "12:34:56 :78:21:b6",
                                   'adminStateUp': True,
@@ -225,12 +225,12 @@ security_group = {'tenant_id': '',
                   'id': '',
                   'security_group_rules': ''}
 
-test_sg_receive = {"tenantId": "e4f50856753b4dc6afee5fa6b9b6c550",
+test_sg_receive = {"tenant_id": "e4f50856753b4dc6afee5fa6b9b6c550",
                    "name": "new-webservers",
                    "description": "security group for webservers",
                    "id": "2076db17-a522-4506-91de-c6dd8e837028",
                    "securityGroupRuleList": [
-                       {"tenantId": "e4f50856753b4dc6afee5fa6b9b6c550",
+                       {"tenant_id": "e4f50856753b4dc6afee5fa6b9b6c550",
                         "remoteGroupId": None,
                         "direction": "egress",
                         "remoteIpPrefix": None,
@@ -302,8 +302,8 @@ test_sg_rule_receive = {'securityGroupRule': {
                         'remoteIpPrefix': None,
                         'protocol': "tcp",
                         'etherType': "IPv4",
-                        'tenantId': "e4f50856753b4dc6a"
-                                    "fee5fa6b9b6c550",
+                        'tenant_id': "e4f50856753b4dc6a"
+                                     "fee5fa6b9b6c550",
                         'portRangeMax': 80,
                         'portRangeMin': 80,
                         'id': "2bc0accf-312e-429a-956e-"

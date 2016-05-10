@@ -230,13 +230,13 @@ def delete_snat(resource, event, trigger, **kwargs):
 
 def _set_security_group(security_group):
     security_group_info = {}
-    security_group_info['tenantId'] = security_group['tenant_id']
+    security_group_info['tenant_id'] = security_group['tenant_id']
     security_group_info['name'] = security_group['name']
     security_group_info['description'] = security_group['description']
     security_group_info['id'] = security_group['id']
     rule_arr = []
     for security_group_rule in security_group['security_group_rules']:
-        rule_info = {'tenantId': security_group_rule['tenant_id'],
+        rule_info = {'tenant_id': security_group_rule['tenant_id'],
                      'remoteGroupId': security_group_rule['remote_group_id'],
                      'direction': security_group_rule['direction'],
                      'remoteIpPrefix': security_group_rule['remote_ip_prefix'],
@@ -259,7 +259,7 @@ def _set_security_group_rule(rule):
                  'remoteIpPrefix': rule['remote_ip_prefix'],
                  'protocol': rule['protocol'],
                  'etherType': rule['ethertype'],
-                 'tenantId': rule['tenant_id'],
+                 'tenant_id': rule['tenant_id'],
                  'portRangeMax': rule['port_range_max'],
                  'portRangeMin': rule['port_range_min'],
                  'id': rule['id'],
@@ -407,7 +407,7 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                             'status': context.current['status'],
                             'segmentationId': context.current[
                                 'provider:segmentation_id'],
-                            'tenantId': context.current['tenant_id'],
+                            'tenant_id': context.current['tenant_id'],
                             'name': context.current['name'],
                             'adminStateUp': context.current['admin_state_up'],
                             'shared': context.current['shared'],
@@ -465,7 +465,7 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         LOG.debug("The context current in subnet is %s.", context.current)
         try:
             subnet_info = {'networkId': context.current['network_id'],
-                           'tenantId': context.current['tenant_id'],
+                           'tenant_id': context.current['tenant_id'],
                            'id': context.current['id'],
                            'name': context.current['name'],
                            'ipVersion': context.current['ip_version'],
@@ -577,7 +577,7 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         port_info = {'id': context.current['id'],
                      'name': context.current['name'],
                      'networkId': context.current['network_id'],
-                     'tenantId': context.current['tenant_id'],
+                     'tenant_id': context.current['tenant_id'],
                      'hostId': context.current['binding:host_id'],
                      'macAddress': context.current['mac_address'],
                      'adminStateUp': context.current['admin_state_up'],
