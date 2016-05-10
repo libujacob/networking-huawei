@@ -29,9 +29,12 @@ There must be an Agile Controller 2.0 running in a machine which is reachable fr
 2.2 Setup where OpenStack Controller is already deployed
 ********************************************************
 
+
      1. Install the plugin *"pip install git+git://git.openstack.org/openstack/networking-huawei"*.
+
      2. Update /etc/neutron/plugins/ml2/ml2_conf.ini for L2 plugin.
-     ::
+
+      ::
 
             [ml2]
             type_drivers = local,vxlan
@@ -56,7 +59,8 @@ There must be an Agile Controller 2.0 running in a machine which is reachable fr
             tunnel_type = vxlan
 
      3. Update /etc/neutron/neutron.conf for L3 router plugin.
-     ::
+
+      ::
 
             [DEFAULT]
             service_plugins = huawei_ac_router
