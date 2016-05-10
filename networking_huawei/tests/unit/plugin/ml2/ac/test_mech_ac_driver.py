@@ -14,7 +14,9 @@
 #    under the License.
 
 import mock
+from networking_huawei.common import exceptions as ml2_exc
 import networking_huawei.plugins.ml2.ac.driver as huawei_ml2_driver
+from networking_huawei.plugins.ml2.ac.driver import HuaweiACMechanismDriver
 from neutron.plugins.common import constants
 from neutron.plugins.ml2 import driver_api as api
 from neutron.plugins.ml2 import driver_context as ctx
@@ -169,6 +171,21 @@ test_port_object_receive = {"id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
                             "sercurityGroups": [],
                             "deviceOwner": "fake_owner",
                             "hostId": "ubuntu"}
+
+test_port_object_receive_no_service = {"id": "72c56c48-e9b8-4dcf-b3a7-"
+                                             "0813bb3bd839",
+                                       "networkId": "d897e21a-dfd6-"
+                                                    "4331-a5dd-7524fa"
+                                                    "421c3e",
+                                       "macAddress": "12:34:56 :78:21:b6",
+                                       "tenant_id": "test-tenant",
+                                       "profile":
+                                           {"localLinkInformations": []},
+                                       "name": "",
+                                       "adminStateUp": True,
+                                       "sercurityGroups": [],
+                                       "deviceOwner": "fake_owner",
+                                       "hostId": "ubuntu"}
 
 test_port_object_receive_sg = {"id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
                                "serviceName": "physnet1",
@@ -358,12 +375,14 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         return response
 
     def _test_response(self, context, oper_type,
-                       obj_type, mock_method, any=False):
+                       obj_type, mock_method,
+                       any=False,
+                       oper_del_need_data=False):
         body = '{}'
         url = ""
         append_url = "controller/dc/esdk/v2.0/"
 
-        if oper_type is not 'DELETE':
+        if oper_del_need_data or oper_type is not 'DELETE':
             entity = {obj_type: sorted(context.current.copy().values())}
             body = jsonutils.dumps(entity)
 
@@ -375,12 +394,16 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                                     append_url +
                                     obj_type + 's',
                                     context.current['id'])
+            else:
+                url = '%s/%s/%s' % (self.ml2_huawei_path, append_url +
+                                    obj_type + 's',
+                                    context.current['id'])
         else:
             url = '%s/%s/%s' % (self.ml2_huawei_path, append_url +
                                 obj_type + 's',
                                 context.current['id'])
 
-        if oper_type is not 'DELETE':
+        if oper_del_need_data or oper_type is not 'DELETE':
             data = mock_method.call_args[1]['data']
             data_network = jsonutils.loads(data)
 
@@ -692,6 +715,17 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 huawei_ml2_driver.\
                     create_security_group(None, None, None, **kwargs)
 
+    def test_create_rest_request_exception(self):
+
+        self.assertRaises(ml2_exc.MechanismDriverError,
+                          huawei_ml2_driver.rest_request,
+                          None,
+                          None,
+                          'invalid_operation')
+        huawei_ml2_driver.rest_request(None,
+                                       {'securityGroup1': None},
+                                       'create_security_group')
+
     def test_create_security_group_exception_sg(self):
         resp = self._mock_req_resp(requests.codes.all_good)
         kwargs = test_sg_create
@@ -818,16 +852,19 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             huawei_ml2_driver.default_security_group_rest_callback(
                 '0', None, requests.codes.no_content, None)
             huawei_ml2_driver.default_security_group_rest_callback(
+                '0', None, requests.codes.not_implemented, None)
+            huawei_ml2_driver.default_security_group_rest_callback(
                 '1', None, requests.codes.ok, None)
         except Exception:
             pass
 
-    def test_all_rest_callback(self):
+    def test_all_callback(self):
         try:
-            self.__callBack__('1', None,
-                              requests.codes.ok, None)
             self.__callBack__('0', None,
                               requests.codes.internal_server_error, None)
+
+            self.__callBack__('1', None,
+                              requests.codes.ok, None)
         except Exception:
             pass
 
@@ -837,12 +874,15 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                                             requests.codes.ok, None)
             huawei_ml2_driver.rest_callback('0', None,
                                             requests.codes.no_content, None)
+            huawei_ml2_driver.rest_callback('0', None,
+                                            requests.codes.
+                                            insufficient_storage,
+                                            None)
             huawei_ml2_driver.rest_callback('1', None,
                                             requests.codes.ok, None)
         except Exception:
             pass
 
-    # # passed
     def test_create_security_group_rule_rollback(self):
         resp = self._mock_req_resp(requests.codes.all_good)
         context_receive = mock.Mock(current=test_delete_sg_rule_receive)
@@ -852,7 +892,6 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             self._test_response_sg(context_receive, 'DELETE',
                                    'security-group-rule', mock_method)
 
-    # passed
     def test_create_security_group_rule_rollback_exception(self):
         resp = self._mock_req_resp(requests.codes.all_good)
         context_receive = mock.Mock(current=test_delete_sg_rule_receive)
@@ -868,13 +907,41 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             except Exception:
                 pass
 
+    def test_delete_port_postcommit(self):
+        context = mock.Mock(current=test_port_object_sent)
+        context_receive = \
+            mock.Mock(current=test_port_object_receive_no_service)
+
+        resp = self._mock_req_resp(requests.codes.ok)
+        with mock.patch('requests.request',
+                        return_value=resp) as mock_method:
+            self.delete_port_postcommit(context)
+            self._test_response(context_receive,
+                                'DELETE', 'port', mock_method, False, True)
+
+    def test_delete_port_postcommit_exception(self):
+        context = mock.Mock(current=test_port_object_sent)
+        del test_port_object_sent['tenant_id']
+        self.assertRaises(KeyError,
+                          self.delete_port_postcommit,
+                          context)
+        test_port_object_sent.update({'tenant_id': 'test-tenant'})
+
+    def test_rest_request_error_case(self):
+        acml2driver = HuaweiACMechanismDriver()
+        self.assertRaises(ml2_exc.MechanismDriverError,
+                          acml2driver.__restRequest__,
+                          None,
+                          None,
+                          'invalid_operation')
+
     # error, bug invalid option used in code
     # def test_creportOpenstackName(self):
     #
     #     resp = self._mock_req_resp(requests.codes.all_good)
     #
     #     url = '%s%s' % (self.ml2_huawei_path, "
-                # /rest/openapi/AgileController/OpenSDK/openstackname")
+    #                    /rest/openapi/AgileController/OpenSDK/openstackname")
     #     kwargs = {'url': url, 'data': {}}
     #
     #     with mock.patch.object(huawei_ml2_driver, 'rest_request',
@@ -885,38 +952,23 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
     #         mock_method.assert_called_once_with(
     #             "POST",
     #             headers={'Content-type': 'application/json',
-                # 'Accept': 'application/json'},
+    #             'Accept': 'application/json'},
     #             timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
     #             verify=False,
     #             **kwargs)
-
-    # currenlty only delete_port_precommit is supported looks like some bug
-    # dont have delete_port_postcommit method to test this case
-    # todo: check with libu later
-    # def test_delete_port_precommit(self):
-    #     context = mock.Mock(current=test_port_object_sent)
-    #     context_receive = mock.Mock(current=test_port_object_delete_update)
-    #     resp = self._mock_req_resp(requests.codes.ok)
-    #     with mock.patch('requests.request',
-    #                     return_value=resp) as mock_method:
-    #         self.delete_port_precommit(context)
-    #         self._test_response(context_receive,
-                # 'DELETE', 'port', mock_method)
-
     # # # error
     # # def test_create_network_postcommit_no_tenant(self):
     # #     context = mock.Mock(current=
-                # test_network_object_sent_missing_tenant_id)
+    #           test_network_object_sent_missing_tenant_id)
     # #     context_receive = mock.Mock(current=test_network_object_receive)
     # #     resp = self._mock_req_resp(requests.codes.no_content)
     # #     with mock.patch('requests.request',
     # #                     return_value=resp) as mock_method:
     # #         self.create_network_postcommit(context)
     # #         self._test_response(context_receive, 'POST',
-                # 'network', mock_method)
+    #                               'network', mock_method)
     #
     #
-
     # # create port with security group, facing err in importing in mock
     # def test_create_port_postcommit_with_sg(self):
     #
@@ -926,10 +978,9 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
     #     # sg_group = self._mock_sg_group_resp()
     #
     #     with mock.patch('requests.request', return_value=resp)
-                # as mock_method:
+    #                      as mock_method:
     #         with mock.patch.object(huawei_ml2_driver.SecurityGroupDbManager,
-                # 'get_security_group',
-    #                                return_value=security_group):
+    #             'get_security_group',return_value=security_group):
     #             self.create_port_postcommit(context)
     #             self._test_response(context_receive, 'POST',
-                # 'port', mock_method)
+    #             'port', mock_method)
