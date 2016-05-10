@@ -176,15 +176,3 @@ class RestClient(object):
             return True
         else:
             return False
-
-    # Check whether the http response is failure ir not
-    def httpError(self):
-        pass
-
-    # http Operationtimeout
-    def httpTimeout(self):
-        pass
-
-    # Post the message
-    def post(self):
-        pass
