@@ -511,7 +511,7 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         self.__deal_port__(context, 'update_port')
 
     @log_helpers.log_method_call
-    def delete_port_precommit(self, context):
+    def delete_port_postcommit(self, context):
         """This function sends port delete message to AC
 
         :param context: DB context for the port delete
@@ -577,7 +577,7 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         port_info = {'id': context.current['id'],
                      'name': context.current['name'],
                      'networkId': context.current['network_id'],
-                     'tenant_id': context.current['tenant_id'],
+                     'tenantId': context.current['tenant_id'],
                      'hostId': context.current['binding:host_id'],
                      'macAddress': context.current['mac_address'],
                      'adminStateUp': context.current['admin_state_up'],
