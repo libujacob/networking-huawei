@@ -173,20 +173,6 @@ def create_security_group_rule_rollback(rule_id):
 
 
 @log_helpers.log_method_call
-def update_security_group_rule(resource, event, trigger, **kwargs):
-    """Subscribed for security group rule update
-
-    :param resource: Security group resources
-    :param event: Event
-    :param trigger: Trigger for the call
-    :param kwargs: Args
-    :return: None
-    """
-
-    pass
-
-
-@log_helpers.log_method_call
 def delete_security_group_rule(resource, event, trigger, **kwargs):
     """Subscribed for security group rule delete
 
@@ -346,9 +332,6 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         registry.subscribe(
             create_security_group_rule, resources.SECURITY_GROUP_RULE,
             events.AFTER_CREATE)
-        registry.subscribe(
-            update_security_group_rule, resources.SECURITY_GROUP_RULE,
-            events.AFTER_UPDATE)
         registry.subscribe(
             delete_security_group_rule, resources.SECURITY_GROUP_RULE,
             events.AFTER_DELETE)
