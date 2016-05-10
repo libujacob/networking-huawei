@@ -33,7 +33,7 @@ from neutron_lib import constants as q_const
 from oslo_log import helpers as log_helpers
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
-import requests
+from requests import codes as req_code
 
 LOG = logging.getLogger(__name__)
 
@@ -298,11 +298,11 @@ def rest_request(id, entry_info, operation):
 
 @log_helpers.log_method_call
 def rest_callback(errorcode, reason, status, data=None):
-    if status == requests.codes.ok and reason is None:
+    if status == req_code.ok and reason is None:
         if errorcode != '0':
             LOG.error(_LE("Raise MechanismDriverError."))
             raise ml2_exc.MechanismDriverError(method='rest_callback')
-    elif status == requests.codes.no_content:
+    elif status == req_code.no_content:
         pass
     else:
         LOG.error(_LE("Raise MechanismDriverError."))
@@ -311,12 +311,12 @@ def rest_callback(errorcode, reason, status, data=None):
 @log_helpers.log_method_call
 def default_security_group_rest_callback(
         errorcode, reason, status, data=None):
-    if status == requests.codes.ok and reason is None:
+    if status == req_code.ok and reason is None:
         if errorcode != '0':
             LOG.error(_LE("Raise MechanismDriverError."))
             raise ml2_exc.MechanismDriverError(method="default_security_"
                                                       "group_rest_callback")
-    elif status == requests.codes.no_content:
+    elif status == req_code.no_content:
         pass
     else:
         LOG.error(_LE("Default security group processing error."))
@@ -634,11 +634,11 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
 
     @log_helpers.log_method_call
     def __callBack__(self, errorCode, reason, status, data=None):
-        if status == requests.codes.ok and reason is None:
+        if status == req_code.ok and reason is None:
             if errorCode != '0':
                 LOG.debug("Error code not 0, raise mechanism driver error.")
                 raise ml2_exc.MechanismDriverError(method='__callBack__')
-        elif status == requests.codes.no_content:
+        elif status == req_code.no_content:
             pass
         else:
             LOG.debug("Status not ok, raise mechanism driver error.")

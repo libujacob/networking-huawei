@@ -32,7 +32,7 @@ from oslo_config import cfg
 from oslo_log import helpers as log_helpers
 from oslo_log import log as logging
 from oslo_utils import importutils
-import requests
+from requests import codes as req_code
 
 LOG = logging.getLogger(__name__)
 
@@ -172,11 +172,11 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
 
     @log_helpers.log_method_call
     def __callBack__(self, errorcode, reason, status, data=None):
-        if status == requests.codes.ok and reason is None:
+        if status == req_code.ok and reason is None:
             if errorcode != '0':
                 LOG.debug("Error code not 0, raise mechanism driver error.")
                 raise ml2_exc.MechanismDriverError(method='__callBack__')
-        elif status == requests.codes.no_content:
+        elif status == req_code.no_content:
             pass
         else:
             LOG.debug("Status not ok, raise mechanism driver error.")

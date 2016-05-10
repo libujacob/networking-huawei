@@ -17,7 +17,7 @@
 from networking_huawei.common.ac.client.restclient import RestClient
 from oslo_config import cfg
 from oslo_log import log as logging
-import requests
+from requests import codes as req_code
 import time
 
 OPEN_ID = ''
@@ -68,8 +68,8 @@ class RESTService(object):
         if client.http_success(result):
             LOG.debug('AC: request is success.')
         else:
-            if (result['status'] == requests.codes.ok) and \
-                result['response']['code'] == requests.codes.no_content:
+            if (result['status'] == req_code.ok) and \
+                result['response']['code'] == req_code.no_content:
                 LOG.debug('AC:openid is invalid, get openid again.')
 
     def __doRequestSerive__(self, data, status, reason):
