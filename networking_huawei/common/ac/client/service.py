@@ -52,7 +52,6 @@ class RESTService(object):
     def requestService(self, method, url, id, body, isNeedServiceName=None,
                        callBack=None):
         LOG.debug('Request Service has been called.')
-        result = {}
         client = RestClient()
         if isNeedServiceName is True:
             for key in body:
@@ -73,8 +72,6 @@ class RESTService(object):
                 LOG.debug('AC:openid is invalid, get openid again.')
 
     def __doRequestSerive__(self, data, status, reason):
-
-        result = {}
 
         result = self.requestREST(
             self.__requestServiceParams__['method'],
