@@ -1,0 +1,81 @@
+#CONTROLLER CONFIG FILE
+[[local|localrc]]
+#FORCE=yes
+#RECLONE=True
+#OFFLINE=True
+DEST=/opt/stack
+
+# Logging
+LOGFILE=$DEST/logs/stack.sh.log
+VERBOSE=True
+LOG_COLOR=False
+SCREEN_LOGDIR=$DEST/logs/screen
+
+# Github's Branch
+GLANCE_BRANCH=stable/mitaka
+HORIZON_BRANCH=stable/mitaka
+KEYSTONE_BRANCH=stable/mitaka
+NOVA_BRANCH=stable/mitaka
+NEUTRON_BRANCH=stable/mitaka
+HEAT_BRANCH=stable/mitaka
+CEILOMETER_BRANCH=stable/mitaka
+
+MULTI_HOST=1
+MYSQL_PASSWORD=openstack
+DATABASE_PASSWORD=openstack
+RABBIT_PASSWORD=openstack
+ADMIN_PASSWORD=openstack
+SERVICE_PASSWORD=openstack
+HORIZON_PASSWORD=openstack
+SERVICE_TOKEN=openstack
+default_store=file
+
+#MY IP
+HOST_IP=192.167.1.10
+IP_VERSION=4
+
+disable_service n-net
+enable_service neutron q-svc q-agt q-dhcp q-l3 q-meta
+disable_service n-spice
+enable_service n-novnc
+disable_service n-xvnc
+enable_service n-sproxy
+disable_service tempest
+enable_plugin networking-huawei /opt/stack/networking-huawei
+ 
+DEST=/opt/stack
+SCREEN_LOGDIR=$DEST/logs/
+LOGFILE=${SCREEN_LOGDIR}/xstack.sh.log
+LOGDAYS=1
+DATABASE_QUERY_LOGGING=False
+
+[[post-config|/etc/neutron/neutron.conf]]
+[DEFAULT]
+service_plugins = huawei_ac_router
+
+[[post-config|/$Q_PLUGIN_CONF_FILE]]
+[ml2]
+type_drivers = local,vxlan
+mechanism_drivers = huawei_ac_ml2
+
+[ml2_type_gre]
+tunnel_id_ranges = 32769:34000
+
+[ml2_type_vxlan]
+vni_ranges = 65537:69999
+
+[ml2_huawei]
+host = 192.167.1.10
+username = admin
+password = Rc9xv1SFCfoS+7wmfNS7pQ==
+
+[ovs]
+integration_bridge = br-int
+tunnel_id_ranges = 65537:69999
+tenant_network_type = vxlan
+enable_tunneling = true
+tunnel_type = vxlan
+
+[agent]
+vxlan_udp_port = 4790
+l2_population = False

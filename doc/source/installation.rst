@@ -22,7 +22,7 @@ There must be an Agile Controller 2.0 running in a machine which is reachable fr
      3. Move inside the DevStack *"cd devstack"*.
      4. Add networking huawei plugin to the *local.conf/localrc* file *"enable_plugin networking-huawei https://github.com/openstack/networking-huawei.git master"*.
      5. Update the configuration of AC in *local.conf/localrc* file under *ml2_huawei* namespace.
-     6. Else, download the plugin code *"git clone https://github.com/openstack/networking-huawei.git"* and copy *local.conf.sample* file to *devstack* folder and rename it as *local.conf*.
+     6. Else, download the plugin code *"git clone https://github.com/openstack/networking-huawei.git"* and copy *local.conf.sample.controller* file to *devstack* folder and rename it as *local.conf*.
      7. Update the *etc/neutron/huawei_ac_config.ini* file with host, port and other AC configurations.
      8. Start the DevStack *"./stack.sh"*.
 
