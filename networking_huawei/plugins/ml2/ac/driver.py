@@ -36,11 +36,6 @@ import requests
 
 LOG = logging.getLogger(__name__)
 
-global default_security_group_sync
-global default_security_groups
-default_security_group_sync = False
-default_security_groups = []
-
 
 @log_helpers.log_method_call
 def create_security_group(resource, event, trigger, **kwargs):
@@ -280,22 +275,13 @@ def rest_request(id, entry_info, operation):
         try:
             if operation == 'create_security_group' \
                     and entry_info['securityGroup']['name'] == 'default':
-                default_security_group_sync = False
                 service.requestService(methodname,
                                        url,
                                        id,
                                        entry_info,
                                        False,
                                        default_security_group_rest_callback)
-                if default_security_group_sync:
-                    default_security_groups \
-                        .append(entry_info['securityGroup']['id'])
             else:
-                if operation == 'delete_security_group':
-                    for group_id in default_security_groups:
-                        if group_id == entry_info['securityGroup']['id']:
-                            default_security_groups \
-                                .remove(entry_info['securityGroup']['id'])
                 service.requestService(methodname,
                                        url,
                                        id,
@@ -542,8 +528,7 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                     .securityGroupDb.get_security_group(
                         self.ctx, security_group_id)
                 security_group_info = _set_security_group(sg_group)
-                if security_group_info['name'] == 'default' and not self \
-                        .__check_default_security_group(security_group_id):
+                if security_group_info['name'] == 'default':
                     LOG.info(_LI("security_group_info is %s"),
                              security_group_info)
                     rest_request(security_group_info['id'],
@@ -551,12 +536,6 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                                  'create_security_group')
         LOG.debug("The port_info is %s.", port_info)
         self.__restRequest__(port_info['port']['id'], port_info, operation)
-
-    def __check_default_security_group(self, security_group_id):
-        for sg_id in default_security_groups:
-            if sg_id == security_group_id:
-                return True
-        return False
 
     @log_helpers.log_method_call
     def bind_port(self, context):
