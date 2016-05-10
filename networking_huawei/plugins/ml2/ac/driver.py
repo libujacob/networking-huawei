@@ -573,13 +573,6 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                                 'ovs',
                                 vif_details)
 
-    def __is_device_owner_compute__(self, context):
-        device_owner = context.current['device_owner']
-        if device_owner.find("compute") == 0:
-            return True
-        else:
-            return False
-
     def __setPortinfo__(self, context):
         LOG.debug("The context current in Port is %s.", context.current)
         port_info = {'id': context.current['id'],
