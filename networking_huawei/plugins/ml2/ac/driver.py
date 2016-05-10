@@ -605,9 +605,9 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         if context.current['fixed_ips']:
             fixedIps = {}
             fixedIp = []
-            for ietm in context.current['fixed_ips']:
-                fixedIps['subnetId'] = ietm['subnet_id']
-                fixedIps['ipAddress'] = ietm['ip_address']
+            for item in context.current['fixed_ips']:
+                fixedIps['subnetId'] = item['subnet_id']
+                fixedIps['ipAddress'] = item['ip_address']
                 fixedIp.append(fixedIps)
             port_info['fixedIps'] = fixedIp
         port_info['sercurityGroups'] = context.current['security_groups']
