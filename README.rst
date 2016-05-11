@@ -2,7 +2,7 @@
 Networking Huawei
 ===============================
 
-Neutron plugin code to interact with Agile Controller(AC) 2.0 and OpenStack Neutron.
+Neutron plugin to interact with Agile Controller(AC) 2.0 and OpenStack Neutron.
 
 The Huawei Agile Controller 2.0 allows next-generation networks to follow SDN principles throughout the engineering process through the provision of network services, policy
 orchestration, and management functionality via the Open Services Gateway initiation (OSGi) framework and Representational State Transfer (REST) API interface capabilities, that allow service applications to employ network capabilities through their defined interfaces. The result is that the Agile Controller 2.0 enables the orchestration of network-wide resources in support of application services.
