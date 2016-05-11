@@ -1,9 +1,9 @@
-************
+============
 Installation
-************
+============
 
 1. General
-##########
+----------
 
 This guide will help you to install networking_huawei plugin for openstack to communicate with Huawei Agile Controller 2.0.
 
@@ -12,10 +12,10 @@ This guide does not necessarily cover all OpenStack installation steps especiall
 There must be an Agile Controller 2.0 running in a machine which is reachable from the Neutron Server.
 
 2. Networking-huawei plugin installation
-########################################
+----------------------------------------
 
 2.1 DevStack deployment
-***********************
+~~~~~~~~~~~~~~~~~~~~~~~
 
      1. Download the DevStack *"git clone https://git.openstack.org/openstack-dev/devstack"*.
      2. Create user stack *"devstack/tools/create-stack-user.sh; su stack"*.
@@ -35,7 +35,7 @@ There must be an Agile Controller 2.0 running in a machine which is reachable fr
      8. Start the DevStack *"./stack.sh"*.
 
 2.2 Setup where OpenStack Controller is already deployed
-********************************************************
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
      1. Install the plugin *"pip install git+git://git.openstack.org/openstack/networking-huawei"*.
