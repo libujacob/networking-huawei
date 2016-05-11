@@ -1,6 +1,6 @@
-===========================================
- Enabling in DevStack for networking-huawei
-===========================================
+=====================
+ Enabling in DevStack
+=====================
 
 This directory contains the networking-huawei devstack plugin. To configure the networking huawei, you have to enable the networking-huawei devstack plugin by editing the [[local|localrc]] section of your local.conf file.
 
