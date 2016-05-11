@@ -71,10 +71,10 @@ class RestClient(object):
 
         LOG.debug("AC request result, status_code: %s, content: %s, "
                   "headers: %s", ret.status_code,
-                  ret.content.decode('utf-8'), ret.headers)
+                  ret.content, ret.headers)
 
         res_code = int(ret.status_code)
-        res_content = ret.content.decode('utf-8')
+        res_content = ret.content
         try:
             if requests.codes.ok <= res_code < requests.codes.multiple_choices:
                 LOG.debug('AC process request successfully.')

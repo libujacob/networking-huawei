@@ -16,6 +16,7 @@
 import mock
 from networking_huawei._i18n import get_available_languages
 import networking_huawei.common.ac.client.restclient as ac_rest
+import networking_huawei.common.ac.client.service as ac_service
 from networking_huawei.common import exceptions as ml2_exc
 import networking_huawei.plugins.ml2.ac.driver as huawei_ml2_driver
 from networking_huawei.plugins.ml2.ac.driver import HuaweiACMechanismDriver
@@ -41,6 +42,18 @@ test_network_object_sent = {'status': 'ACTIVE',
                             'id': test_network_uuid,
                             'provider:segmentation_id': None}
 
+test_network_object_sent_ext = {'status': 'ACTIVE',
+                                'subnets': [],
+                                'name': 'net1',
+                                'provider:physical_network': None,
+                                'admin_state_up': True,
+                                'tenant_id': 'test-tenant',
+                                'provider:network_type': 'local',
+                                'router:external': True,
+                                'shared': False,
+                                'id': test_network_uuid,
+                                'provider:segmentation_id': None}
+
 test_network_object_sent_missing_tenant_id = {'status': 'ACTIVE',
                                               'subnets': [],
                                               'name': 'net1',
@@ -64,6 +77,19 @@ test_network_object_receive = {"id": "d897e21a-dfd6-4331-a5dd-7524fa421c3e",
                                "physicalNetwork": None,
                                "routerExternal": False,
                                "serviceName": "physnet1"}
+
+test_network_object_receive_ext = {"id": "d897e21a-dfd6-4331-"
+                                         "a5dd-7524fa421c3e",
+                                   "status": "ACTIVE",
+                                   "segmentationId": None,
+                                   "tenant_id": "test-tenant",
+                                   "name": "net1",
+                                   "adminStateUp": True,
+                                   "shared": False,
+                                   "networkType": "local",
+                                   "physicalNetwork": None,
+                                   "routerExternal": True,
+                                   "serviceName": "physnet1"}
 
 test_network_object_receive_update = {"id": "d897e21a-dfd6-4331-"
                                             "a5dd-7524fa421c3e",
@@ -109,6 +135,22 @@ test_subnet_object_receive = {'networkId': test_network_uuid,
                               'hostRoutes': [],
                               "serviceName": "physnet1"}
 
+test_subnet_object_receive_ipv6 = {'networkId': test_network_uuid,
+                                   'tenant_id': 'test-tenant',
+                                   'ipv6AddressMode': None,
+                                   'ipv6RaMode': None,
+                                   'id': test_subnet_uuid,
+                                   'name': '',
+                                   'ipVersion': 6,
+                                   'enableDhcp': True,
+                                   'allocationPools': [{'start': '10.0.0.2',
+                                                       'end': '10.0.1.254'}],
+                                   'cidr': '10.0.0.0/23',
+                                   'gatewayIp': '10.0.0.1',
+                                   'dnsNameservers': [],
+                                   'hostRoutes': [],
+                                   "serviceName": "physnet1"}
+
 test_subnet_object_update = {'networkId': test_network_uuid,
                              'tenant_id': 'test-tenant',
                              'id': test_subnet_uuid,
@@ -142,6 +184,39 @@ test_port_object_sent = {'status': 'DOWN',
                          'binding:vif_type': 'unbound',
                          'mac_address': '12:34:56 :78:21:b6'}
 
+test_port_object_sent_bp = {'status': 'DOWN',
+                            'binding:host_id': 'ubuntu',
+                            'allowed_address_pairs': [],
+                            'device_owner': 'fake_owner',
+                            'binding:profile': {'local_link_information': [
+                                {'swich_id': "",
+                                 'mgmtIP': "",
+                                 'bondtype': "",
+                                 'port_id': "",
+                                 'switch_info': ""}
+                            ]},
+                            'fixed_ips': [],
+                            'id': test_fake_port_uuid,
+                            'security_groups': [],
+                            'device_id': 'fake_device',
+                            'name': '',
+                            'admin_state_up': True,
+                            'network_id': test_network_uuid,
+                            'tenant_id': 'test-tenant',
+                            'binding:vif_details': {},
+                            'binding:vnic_type': 'normal',
+                            'binding:vif_type': 'unbound',
+                            'mac_address': '12:34:56 :78:21:b6',
+                            "fixed_ips": [
+                                {
+                                    "ip_address":
+                                        "10.0.0.2",
+                                    "subnet_id": "a0304c3a-4f08-4c43-"
+                                                 "88af-d796509c97d2",
+                                }
+                            ],
+                            }
+
 test_port_object_sent_sg = {'status': 'DOWN',
                             'binding:host_id': 'ubuntu',
                             'allowed_address_pairs': [],
@@ -152,7 +227,7 @@ test_port_object_sent_sg = {'status': 'DOWN',
                             'security_groups':
                                 ['2f9244b4-9bee-4e81-bc4a-3f3c2045b3d7'],
                             'device_id': 'fake_device',
-                            'name': '',
+                            'name': 'default',
                             'admin_state_up': True,
                             'network_id': test_network_uuid,
                             'tenant_id': 'test-tenant',
@@ -174,6 +249,35 @@ test_port_object_receive = {"id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
                             "deviceOwner": "fake_owner",
                             "hostId": "ubuntu"}
 
+test_port_object_receive_bp = {'status': 'DOWN',
+                               "id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
+                               "networkId": "d897e21a-dfd6-4331-a5dd-7524fa"
+                               "421c3e",
+                               "macAddress": "12:34:56 :78:21:b6",
+                               "tenant_id": "test-tenant",
+                               "serviceName": "physnet1",
+                               "profile": {"localLinkInformations":
+                                           [{"switchId": "",
+                                             "mgmtIp": "",
+                                             "bondType": "",
+                                             "portId": "",
+                                             "switchInfo": ""}]},
+                               "name": "",
+                               "adminStateUp": True,
+                               "sercurityGroups": [],
+                               "deviceOwner": "fake_owner",
+                               'device_id': 'fake_device',
+                               'binding:vif_type': 'unbound',
+                               'binding:vnic_type': 'normal',
+                               'binding:host_id': 'ubuntu',
+                               "fixed_ips": [
+                                   {
+                                       "subnetId": "a0304c3a-4f08-4c43-"
+                                                    "88af-d796509c97d2",
+                                       "ipAddress": "10.0.0.2",
+                                   }
+                               ]}
+
 test_port_object_receive_no_service = {"id": "72c56c48-e9b8-4dcf-b3a7-"
                                              "0813bb3bd839",
                                        "networkId": "d897e21a-dfd6-"
@@ -194,7 +298,7 @@ test_port_object_receive_sg = {"id": "72c56c48-e9b8-4dcf-b3a7-0813bb3bd839",
                                "sercurityGroups": ["2f9244b4-9bee-"
                                                    "4e81-bc4a-3f3c2045b3d7"],
                                "tenant_id": "test-tenant",
-                               "name": "",
+                               "name": "default",
                                "macAddress": "12:34:56 :78:21:b6",
                                "deviceOwner": "fake_owner",
                                "hostId": "ubuntu",
@@ -211,6 +315,17 @@ test_port_object_receive_sg_rule_list = {"tenant_id": "e4f50856753b4d"
                                          "id": "2076db17-a522-"
                                                "4506-91de-c6dd8e837028",
                                          "securityGroupRuleList": []}
+
+test_port_object_receive_sg_rule_list_def = {"tenant_id": "e4f50856753b4d"
+                                                          "c6afee5fa6b9b6"
+                                                          "c550",
+                                             "name": "default",
+                                             "description": "security "
+                                                            "group for "
+                                                            "webservers",
+                                             "id": "2076db17-a522-"
+                                                   "4506-91de-c6dd8e837028",
+                                             "securityGroupRuleList": []}
 
 test_port_object_receive_update = {"id": "72c56c48-e9b8-4dcf-"
                                          "b3a7-0813bb3bd839",
@@ -243,6 +358,12 @@ security_group = {'tenant_id': '',
                   'description': '',
                   'id': '',
                   'security_group_rules': ''}
+
+security_group_def = {'tenant_id': '',
+                      'name': 'default',
+                      'description': '',
+                      'id': '',
+                      'security_group_rules': ''}
 
 test_sg_receive = {"tenant_id": "e4f50856753b4dc6afee5fa6b9b6c550",
                    "name": "new-webservers",
@@ -293,6 +414,17 @@ test_sg_create = {"security_group": {
                   "id": "2076db17-a522-4506-"
                         "91de-c6dd8e837028",
                   "security_group_rules": []}}
+
+test_sg_create_def = {"security_group": {
+                      "tenant_id": "e4f50856753b4d"
+                                   "c6afee5fa6b9b6c550",
+                      "name": "default",
+                      "description": "security "
+                                     "group for webservers",
+                      "id": "2076db17-a522-4506-"
+                            "91de-c6dd8e837028",
+                      "security_group_rules": []}}
+
 
 test_delete_sg = {'security_group_id': "2076db17-a522-4506-91de-c6dd8e837028"}
 
@@ -348,7 +480,6 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         super(HuaweiACMechanismDriverTestCase, self).initialize()
         self.set_test_config()
 
-    # over_ride the config file values
     def set_test_config(self):
         cfg.CONF.set_override('host', '127.0.0.1', 'ml2_huawei_ac')
         cfg.CONF.set_override('port', '2222', 'ml2_huawei_ac')
@@ -357,7 +488,6 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         self.ml2_huawei_path = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + \
                                str(cfg.CONF.ml2_huawei_ac.port)
 
-    # prepare the error response for post request
     def _mock_req_resp(self, status_code):
         response = mock.Mock()
         response.response = "OK"
@@ -367,7 +497,6 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             {'result': "ok", 'errorCode': '0', 'errorMsg': None}, indent=2)
         return response
 
-    # prepare the response for post request
     def _mock_req_resp_error(self, status_code):
         response = mock.Mock()
         response.response = "OK"
@@ -381,11 +510,18 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                        any=False,
                        oper_del_need_data=False):
         body = '{}'
-        url = ""
         append_url = "controller/dc/esdk/v2.0/"
 
         if oper_del_need_data or oper_type is not 'DELETE':
-            entity = {obj_type: sorted(context.current.copy().values())}
+
+            try:
+                entity = {obj_type: sorted(context.current.copy().values())}
+            except TypeError:
+                values = context.current.copy().values()
+                values = sorted([str(each_value)
+                                 for each_value in values])
+                entity = {obj_type: values}
+
             body = jsonutils.dumps(entity)
 
             if oper_type == 'POST':
@@ -412,7 +548,12 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             if obj_type in data_network:
                 data_network = data_network[obj_type]
 
-            data_network = sorted(data_network.values())
+            try:
+                data_network = sorted(data_network.values())
+            except TypeError:
+                values = data_network.values()
+                data_network = sorted([str(each_value)
+                                       for each_value in values])
 
             mock_method.call_args[1]['data'] = \
                 jsonutils.dumps({obj_type: data_network})
@@ -542,6 +683,28 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             self._test_response(context_receive, 'POST',
                                 'subnet', mock_method)
 
+    def test_create_subnet_postcommit_keyerror(self):
+        context = mock.Mock(current=test_port_object_sent)
+        del test_subnet_object_sent['tenant_id']
+        self.assertRaises(KeyError,
+                          huawei_ml2_driver.
+                          HuaweiACMechanismDriver().create_subnet_postcommit,
+                          context)
+        test_subnet_object_sent.update({'tenant_id': 'test-tenant'})
+
+    def test_create_subnet_postcommit_ipv6(self):
+        test_subnet_object_sent['ip_version'] = 6
+        context = mock.Mock(current=test_subnet_object_sent)
+        test_subnet_object_receive.update({})
+        context_receive = mock.Mock(current=test_subnet_object_receive_ipv6)
+        resp = self._mock_req_resp(requests.codes.no_content)
+        with mock.patch('requests.request',
+                        return_value=resp) as mock_method:
+            self.create_subnet_postcommit(context)
+            self._test_response(context_receive, 'POST',
+                                'subnet', mock_method)
+            test_subnet_object_sent['ip_version'] = 4
+
     def test_update_subnet_postcommit(self):
         context = mock.Mock(current=test_subnet_object_sent)
         context_receive = mock.Mock(current=test_subnet_object_update)
@@ -571,6 +734,28 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 self._test_response(context_receive, 'POST',
                                     'port', mock_method)
 
+    def test_create_port_postcommit_bp(self):
+        context = mock.Mock(current=test_port_object_sent_bp)
+        resp = self._mock_req_resp(requests.codes.no_content)
+        with mock.patch('requests.request',
+                        return_value=resp):
+                self.create_port_postcommit(context)
+                # self._test_response(context_receive, 'POST',
+                #                     'port', mock_method)
+
+    def test_create_port_postcommit_sg(self):
+        context = mock.Mock(current=test_port_object_sent_sg)
+        context_receive = mock.Mock(current=test_port_object_receive_sg)
+        resp = self._mock_req_resp(requests.codes.no_content)
+        with mock.patch('requests.request',
+                        return_value=resp) as mock_method:
+            with mock.patch.object(huawei_ml2_driver.SecurityGroupDbManager,
+                                   'get_security_group',
+                                   return_value=security_group_def):
+                self.create_port_postcommit(context)
+                self._test_response(context_receive, 'POST',
+                                    'port', mock_method, True)
+
     def test_create_port_postcommit_key_error(self):
         context = mock.Mock(current=test_port_object_sent)
         del test_port_object_sent['tenant_id']
@@ -597,6 +782,12 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         api.SEGMENTATION_ID: 'API_SEGMENTATION_ID',
         api.PHYSICAL_NETWORK: 'API_PHYSICAL_NETWORK'}
 
+    invalid_segment = {
+        api.ID: 'API_ID',
+        api.NETWORK_TYPE: constants.TYPE_NONE,
+        api.SEGMENTATION_ID: 'API_SEGMENTATION_ID',
+        api.PHYSICAL_NETWORK: 'API_PHYSICAL_NETWORK'}
+
     def test_bind_port(self):
 
         self.vif_details = {'ovs_hybrid_plug': True}
@@ -615,6 +806,19 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         # segment api ID
         port_context.set_binding.assert_called_once_with(
             self.valid_segment[api.ID], 'ovs', self.vif_details)
+
+    def test_bind_port_invalid_seg(self):
+
+        self.vif_details = {'ovs_hybrid_plug': True}
+        network = mock.MagicMock(spec=api.NetworkContext)
+
+        port_context = mock.MagicMock(
+            spec=ctx.PortContext, current={'id': 'CURRENT_CONTEXT_ID'},
+            segments_to_bind=[self.invalid_segment],
+            network=network)
+
+        # when port is bound
+        self.bind_port(port_context)
 
     def test_create_network_postcommit_404_error(self):
         context = mock.Mock(current=test_network_object_sent)
@@ -719,6 +923,20 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             current=test_port_object_receive_sg_rule_list)
         resp = self._mock_req_resp(requests.codes.all_good)
         kwargs = test_sg_create
+        with mock.patch('requests.request', return_value=resp) as mock_method:
+            with mock.patch.object(huawei_ml2_driver.SecurityGroupDbManager,
+                                   'get_security_group',
+                                   return_value=security_group):
+                huawei_ml2_driver.create_security_group(
+                    None, None, None, **kwargs)
+                self._test_response_sg(context_receive,
+                                       'POST', 'securityGroup', mock_method)
+
+    def test_create_security_group_default(self):
+        context_receive = mock.Mock(
+            current=test_port_object_receive_sg_rule_list_def)
+        resp = self._mock_req_resp(requests.codes.all_good)
+        kwargs = test_sg_create_def
         with mock.patch('requests.request', return_value=resp) as mock_method:
             with mock.patch.object(huawei_ml2_driver.SecurityGroupDbManager,
                                    'get_security_group',
@@ -907,14 +1125,18 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             pass
 
     def test_all_callback(self):
-        try:
-            self.__callBack__('0', None,
-                              requests.codes.internal_server_error, None)
+        self.assertRaises(ml2_exc.MechanismDriverError,
+                          huawei_ml2_driver.
+                          HuaweiACMechanismDriver().__callBack__,
+                          '0', None,
+                          requests.codes.internal_server_error, None)
 
-            self.__callBack__('1', None,
-                              requests.codes.ok, None)
-        except Exception:
-            pass
+    def test_all_callback_error(self):
+        self.assertRaises(ml2_exc.MechanismDriverError,
+                          huawei_ml2_driver.
+                          HuaweiACMechanismDriver().__callBack__,
+                          '1', None,
+                          requests.codes.ok, None)
 
     def test_all_rest_callback_two(self):
         try:
@@ -985,3 +1207,41 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
 
     def test_get_available_languages(self):
         self.assertEqual(['en_US'], get_available_languages(), "OK")
+
+    def test_create_network_postcommit_ac_simulate(self):
+        context = mock.Mock(current=test_network_object_sent)
+        resp = self._mock_req_resp(requests.codes.no_content)
+        cfg.CONF.set_override('simulator', True, 'ml2_huawei_ac')
+        with mock.patch('requests.request',
+                        return_value=resp):
+            self.create_network_postcommit(context)
+        cfg.CONF.set_override('simulator', False, 'ml2_huawei_ac')
+
+    def test_create_network_postcommit_key_error(self):
+        del test_port_object_sent['id']
+        context = mock.Mock(current=test_port_object_sent)
+        self.assertRaises(KeyError,
+                          huawei_ml2_driver.
+                          HuaweiACMechanismDriver().create_network_postcommit,
+                          context)
+        test_port_object_sent.update({'id': test_fake_port_uuid})
+
+    def test_create_network_postcommit_router(self):
+        context = mock.Mock(current=test_network_object_sent_ext)
+        context_receive = mock.Mock(current=test_network_object_receive_ext)
+        resp = self._mock_req_resp(requests.codes.no_content)
+        with mock.patch('requests.request',
+                        return_value=resp) as mock_method:
+            self.create_network_postcommit(context)
+            self._test_response(context_receive, 'POST',
+                                'network', mock_method)
+
+    def test_create_network_postcommit_err(self):
+        context = mock.Mock(current=test_network_object_sent)
+        with mock.patch.object(ac_service.RESTService(),
+                               '__doRequestSerive__',
+                               return_value={'errorCode': None,
+                                             'reason': None,
+                                             'response': None,
+                                             'status': requests.codes.ok}):
+            self.create_network_postcommit(context)
