@@ -14,6 +14,8 @@
 #    under the License.
 
 import mock
+from networking_huawei._i18n import get_available_languages
+import networking_huawei.common.ac.client.restclient as ac_rest
 from networking_huawei.common import exceptions as ml2_exc
 import networking_huawei.plugins.ml2.ac.driver as huawei_ml2_driver
 from networking_huawei.plugins.ml2.ac.driver import HuaweiACMechanismDriver
@@ -569,6 +571,15 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 self._test_response(context_receive, 'POST',
                                     'port', mock_method)
 
+    def test_create_port_postcommit_key_error(self):
+        context = mock.Mock(current=test_port_object_sent)
+        del test_port_object_sent['tenant_id']
+        self.assertRaises(KeyError,
+                          huawei_ml2_driver.
+                          HuaweiACMechanismDriver().create_port_postcommit,
+                          context)
+        test_port_object_sent.update({'tenant_id': 'test-tenant'})
+
     def test_update_port_postcommit(self):
         context = mock.Mock(current=test_port_object_sent)
         context_receive = mock.Mock(
@@ -674,6 +685,20 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                         return_value=resp) as mock_method:
             mock_method.side_effect = requests.exceptions.\
                 Timeout(mock.Mock(msg="Timeout Exceptions"))
+            self.create_network_postcommit(context)
+            self._test_response(context_receive, 'POST',
+                                'network', mock_method, True)
+
+    def test_create_network_postcommit_err_timeout(self):
+        context = mock.Mock(current=test_network_object_sent)
+        context_receive = mock.Mock(current=test_network_object_receive)
+        resp = self._mock_req_resp_error(requests.codes.unauthorized)
+        with mock.patch('requests.request',
+                        return_value=resp) as mock_method:
+            mock_method.side_effect = [requests.exceptions.Timeout(
+                                       mock.Mock(msg="Timeout Exceptions")),
+                                       Exception(
+                                       mock.Mock(msg="Exception"))]
             self.create_network_postcommit(context)
             self._test_response(context_receive, 'POST',
                                 'network', mock_method, True)
@@ -831,6 +856,29 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             self._test_response_sg(context_receive,
                                    'DELETE', 'snat', mock_method)
 
+    def test_check_get_operation(self):
+        context = mock.Mock(current=test_network_object_sent)
+        resp = self._mock_req_resp_error(requests.codes.unauthorized)
+
+        with mock.patch('requests.request',
+                        return_value=resp) as mock_method:
+            mock_method.side_effect = [requests.exceptions.Timeout(
+                mock.Mock(msg="Timeout Exceptions")),
+                Exception(
+                    mock.Mock(msg="Exception"))]
+            ac_rest.RestClient().process_request('get', "test/ac",
+                                                 "Content-Type: "
+                                                 "application/json",
+                                                 context)
+
+    def test_send_call_back_none(self):
+        context = mock.Mock(current=test_network_object_sent)
+        resp = self._mock_req_resp_error(requests.codes.ok)
+        with mock.patch('requests.request',
+                        return_value=resp):
+            ac_rest.RestClient().send("1.1.1.1", "22", 'put', "test/ac",
+                                      "100", context, None)
+
     def test_delete_snat_exception(self):
         resp = self._mock_req_resp(requests.codes.all_good)
         kwargs = test_delete_snat
@@ -935,52 +983,5 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                           None,
                           'invalid_operation')
 
-    # error, bug invalid option used in code
-    # def test_creportOpenstackName(self):
-    #
-    #     resp = self._mock_req_resp(requests.codes.all_good)
-    #
-    #     url = '%s%s' % (self.ml2_huawei_path, "
-    #                    /rest/openapi/AgileController/OpenSDK/openstackname")
-    #     kwargs = {'url': url, 'data': {}}
-    #
-    #     with mock.patch.object(huawei_ml2_driver, 'rest_request',
-    #                            return_value=resp) as mock_method:
-    #
-    #         rest_service.RESTService().reportOpenstackName()
-    #
-    #         mock_method.assert_called_once_with(
-    #             "POST",
-    #             headers={'Content-type': 'application/json',
-    #             'Accept': 'application/json'},
-    #             timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
-    #             verify=False,
-    #             **kwargs)
-    # # # error
-    # # def test_create_network_postcommit_no_tenant(self):
-    # #     context = mock.Mock(current=
-    #           test_network_object_sent_missing_tenant_id)
-    # #     context_receive = mock.Mock(current=test_network_object_receive)
-    # #     resp = self._mock_req_resp(requests.codes.no_content)
-    # #     with mock.patch('requests.request',
-    # #                     return_value=resp) as mock_method:
-    # #         self.create_network_postcommit(context)
-    # #         self._test_response(context_receive, 'POST',
-    #                               'network', mock_method)
-    #
-    #
-    # # create port with security group, facing err in importing in mock
-    # def test_create_port_postcommit_with_sg(self):
-    #
-    #     context = mock.Mock(current=test_port_object_sent_sg)
-    #     context_receive = mock.Mock(current=test_port_object_receive_sg)
-    #     resp = self._mock_req_resp(requests.codes.all_good)
-    #     # sg_group = self._mock_sg_group_resp()
-    #
-    #     with mock.patch('requests.request', return_value=resp)
-    #                      as mock_method:
-    #         with mock.patch.object(huawei_ml2_driver.SecurityGroupDbManager,
-    #             'get_security_group',return_value=security_group):
-    #             self.create_port_postcommit(context)
-    #             self._test_response(context_receive, 'POST',
-    #             'port', mock_method)
+    def test_get_available_languages(self):
+        self.assertEqual(['en_US'], get_available_languages(), "OK")
