@@ -19,8 +19,6 @@ from oslo_config import cfg
 from oslo_log import log as logging
 from requests import codes as req_code
 
-OPEN_ID = ''
-
 LOG = logging.getLogger(__name__)
 
 
