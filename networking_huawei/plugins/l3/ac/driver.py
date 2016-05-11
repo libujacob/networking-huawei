@@ -153,8 +153,7 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
 
     @log_helpers.log_method_call
     def delete_router(self, context, res_id):
-        info = {}
-        self.__rest_request__(res_id, info, 'delete_router')
+        self.__rest_request__(res_id, {}, 'delete_router')
         super(HuaweiACL3RouterPlugin, self).delete_router(context, res_id)
 
     @log_helpers.log_method_call
