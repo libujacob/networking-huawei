@@ -38,12 +38,6 @@ class RESTService(object):
             id, body, callBack)
         return result
 
-    def __logOff__(self, data, status, reason):
-        self.__requestServiceParams__['success'](data, status, reason)
-
-    def __logoffError__(self, status, reason):
-        pass
-
     def requestService(self, method, url, id, body, isNeedServiceName=None,
                        callBack=None):
         LOG.debug('Request Service has been called.')
