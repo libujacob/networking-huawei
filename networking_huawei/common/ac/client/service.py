@@ -17,7 +17,6 @@
 from networking_huawei.common.ac.client.restclient import RestClient
 from oslo_config import cfg
 from oslo_log import log as logging
-from requests import codes as req_code
 
 LOG = logging.getLogger(__name__)
 
