@@ -32,8 +32,6 @@ class RESTService(object):
 
     def requestREST(self, method, url, id, body,
                     callBack=None):
-
-        result = {}
         client = RestClient()
         result = client.send(
             self.host, self.port, method, url,
