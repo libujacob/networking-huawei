@@ -514,13 +514,14 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
 
         if oper_del_need_data or oper_type is not 'DELETE':
 
+            values = context.current.copy().values()
+
             try:
-                entity = {obj_type: sorted(context.current.copy().values())}
-            except TypeError:
-                values = context.current.copy().values()
-                values = sorted([str(each_value)
-                                 for each_value in values])
-                entity = {obj_type: values}
+                values = sorted(values)
+            except TypeError:  # pragma: no cover
+                values = sorted([str(each_value)  # pragma: no cover
+                                 for each_value in values])  # pragma: no cover
+            entity = {obj_type: values}
 
             body = jsonutils.dumps(entity)
 
@@ -550,9 +551,9 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
 
             try:
                 data_network = sorted(data_network.values())
-            except TypeError:
-                values = data_network.values()
-                data_network = sorted([str(each_value)
+            except TypeError:  # pragma: no cover
+                values = data_network.values()  # pragma: no cover
+                data_network = sorted([str(each_value)  # pragma: no cover
                                        for each_value in values])
 
             mock_method.call_args[1]['data'] = \
