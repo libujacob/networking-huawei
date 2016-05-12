@@ -114,8 +114,7 @@ class RestClient(object):
             raise Exception
 
         if callback is not None:
-            callback(result['errorCode'], result['reason'], result['status'],
-                     result['response'])
+            callback(result['errorCode'], result['reason'], result['status'])
         else:
             LOG.debug("call back is null")
 

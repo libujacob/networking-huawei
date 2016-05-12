@@ -170,7 +170,7 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
             raise ml2_exc.MechanismDriverError(method='__rest_request__')
 
     @log_helpers.log_method_call
-    def __callBack__(self, errorcode, reason, status, data=None):
+    def __callBack__(self, errorcode, reason, status):
         if status == req_code.ok and reason is None:
             if errorcode != '0':
                 LOG.debug("Error code not 0, raise mechanism driver error.")

@@ -1130,14 +1130,14 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                           huawei_ml2_driver.
                           HuaweiACMechanismDriver().__callBack__,
                           '0', None,
-                          requests.codes.internal_server_error, None)
+                          requests.codes.internal_server_error)
 
     def test_all_callback_error(self):
         self.assertRaises(ml2_exc.MechanismDriverError,
                           huawei_ml2_driver.
                           HuaweiACMechanismDriver().__callBack__,
                           '1', None,
-                          requests.codes.ok, None)
+                          requests.codes.ok)
 
     def test_all_rest_callback_two(self):
         try:
