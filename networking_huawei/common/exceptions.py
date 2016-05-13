@@ -15,8 +15,9 @@
 
 """Exceptions used by ML2."""
 
-from networking_huawei._i18n import _
 from neutron_lib import exceptions
+
+from networking_huawei._i18n import _
 
 
 class MechanismDriverError(exceptions.NeutronException):

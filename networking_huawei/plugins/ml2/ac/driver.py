@@ -13,13 +13,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from networking_huawei._i18n import _LE
-from networking_huawei._i18n import _LI
-from networking_huawei._i18n import _LW
-from networking_huawei.common.ac.client.service import RESTService
-from networking_huawei.common.ac.config import config  # noqa
-from networking_huawei.common.ac import constants as ac_const
-from networking_huawei.common import exceptions as ml2_exc
+from requests import codes as req_code
+
+from oslo_log import helpers as log_helpers
+from oslo_log import log as logging
+from oslo_serialization import jsonutils
+
 from neutron.callbacks import events
 from neutron.callbacks import registry
 from neutron.callbacks import resources
@@ -30,10 +29,15 @@ from neutron.extensions import portbindings
 from neutron.plugins.common import constants as n_const
 from neutron.plugins.ml2 import driver_api as api
 from neutron_lib import constants as q_const
-from oslo_log import helpers as log_helpers
-from oslo_log import log as logging
-from oslo_serialization import jsonutils
-from requests import codes as req_code
+
+from networking_huawei._i18n import _LE
+from networking_huawei._i18n import _LI
+from networking_huawei._i18n import _LW
+from networking_huawei.common.ac.client.service import RESTService
+from networking_huawei.common.ac.config import config  # noqa
+from networking_huawei.common.ac import constants as ac_const
+from networking_huawei.common import exceptions as ml2_exc
+
 
 LOG = logging.getLogger(__name__)
 

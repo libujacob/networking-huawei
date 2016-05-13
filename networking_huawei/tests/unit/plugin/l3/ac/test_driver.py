@@ -419,7 +419,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         with mock.patch.object(L3_NAT_db_mixin, 'get_router',
                                return_value=fake_router_db):
             with mock.patch.object(L3_NAT_with_dvr_db_mixin,
-                                   'add_router_interface',
+                                   'remove_router_interface',
                                    return_value=interface_info):
                 acl3router = HuaweiACL3RouterPlugin()
                 self.assertRaises(KeyError,

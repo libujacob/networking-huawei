@@ -14,9 +14,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from networking_huawei.common.ac.client.restclient import RestClient
 from oslo_config import cfg
 from oslo_log import log as logging
+
+from networking_huawei.common.ac.client.restclient import RestClient
+
 
 LOG = logging.getLogger(__name__)
 

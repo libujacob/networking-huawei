@@ -13,12 +13,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from networking_huawei._i18n import _LE
-from networking_huawei._i18n import _LI
-from networking_huawei.common.ac.client.service import RESTService
-from networking_huawei.common.ac.config import config  # noqa
-from networking_huawei.common.ac import constants as ac_const
-from networking_huawei.common import exceptions as ml2_exc
+from requests import codes as req_code
+
+from oslo_config import cfg
+from oslo_log import helpers as log_helpers
+from oslo_log import log as logging
+from oslo_utils import importutils
+
 from neutron.api.rpc.agentnotifiers import l3_rpc_agent_api
 from neutron.api.rpc.handlers import l3_rpc
 from neutron.common import rpc as n_rpc
@@ -28,11 +29,14 @@ from neutron.db import l3_dvrscheduler_db
 from neutron.plugins.common import constants
 from neutron.services.l3_router import l3_router_plugin
 from neutron_lib import constants as q_const
-from oslo_config import cfg
-from oslo_log import helpers as log_helpers
-from oslo_log import log as logging
-from oslo_utils import importutils
-from requests import codes as req_code
+
+from networking_huawei._i18n import _LE
+from networking_huawei._i18n import _LI
+from networking_huawei.common.ac.client.service import RESTService
+from networking_huawei.common.ac.config import config  # noqa
+from networking_huawei.common.ac import constants as ac_const
+from networking_huawei.common import exceptions as ml2_exc
+
 
 LOG = logging.getLogger(__name__)
 
@@ -109,8 +113,10 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
     def add_router_interface(self, context, router_id, interface_info):
         interface_info = super(HuaweiACL3RouterPlugin, self)\
             .add_router_interface(context, router_id, interface_info)
+
         router = super(HuaweiACL3RouterPlugin, self)\
             .get_router(context, router_id)
+
         LOG.debug('Interface info of add_router_interface %s.', interface_info)
         LOG.debug('Router data of add_router_interface %s.', router)
 
@@ -135,6 +141,14 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
     def remove_router_interface(self, context, router_id, interface_info):
         router = super(HuaweiACL3RouterPlugin, self)\
             .get_router(context, router_id)
+
+        interface_info = super(HuaweiACL3RouterPlugin, self)\
+            .remove_router_interface(context, router_id, interface_info)
+
+        LOG.debug('Interface info of remove_router_interface %s.',
+                  interface_info)
+        LOG.debug('Router data of remove_router_interface %s.', router)
+
         service = RESTService()
         service_name = service.serviceName
 
@@ -148,8 +162,6 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
             raise KeyError
 
         self.__rest_request__(router_id, rest_info, 'delete_router_interface')
-        super(HuaweiACL3RouterPlugin, self)\
-            .remove_router_interface(context, router_id, interface_info)
 
     @log_helpers.log_method_call
     def delete_router(self, context, res_id):

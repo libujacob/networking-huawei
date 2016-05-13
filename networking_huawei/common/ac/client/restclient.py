@@ -13,12 +13,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from networking_huawei._i18n import _LE
+import requests
+import traceback
+
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
-import requests
-import traceback
+
+from networking_huawei._i18n import _LE
+
 
 LOG = logging.getLogger(__name__)
 
