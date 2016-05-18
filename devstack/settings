@@ -7,10 +7,9 @@ ML2_L3_PLUGIN=huawei_ac_router
 # Type driver configurations
 Q_ML2_PLUGIN_TYPE_DRIVERS=local,flat,vlan,gre,vxlan
 # Configuration file path
-#Q_PLUGIN_EXTRA_CONF_PATH=$NEUTRON_CONF_DIR/plugins/ml2
 Q_PLUGIN_EXTRA_CONF_PATH=etc/neutron
 # Huawel ac mls configuration file
-Q_PLUGIN_EXTRA_CONF_FILES=(huawei_ac_config.ini)
+Q_PLUGIN_EXTRA_CONF_FILES=(huawei_driver_config.ini)
 # Enable the VLAN sevices
 ENABLE_TENANT_VLANS=True
 # Enable the huawe-ac service for plugin support
