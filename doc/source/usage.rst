@@ -1,5 +1,5 @@
 ..
-      Copyright 2015-2016 Huawei India Pvt Ltd. All rights reserved.
+      Copyright 2016 Huawei Technologies Co. Ltd. All rights reserved.
 
       Licensed under the Apache License, Version 2.0 (the "License"); you may
       not use this file except in compliance with the License. You may obtain
@@ -23,7 +23,7 @@
       (Avoid deeper levels because they do not render well.)
 
 Usage
-========
+=====
 
 To use networking-huawei in a project::
 
