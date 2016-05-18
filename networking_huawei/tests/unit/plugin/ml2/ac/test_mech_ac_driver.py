@@ -1209,15 +1209,6 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
     def test_get_available_languages(self):
         self.assertEqual(['en_US'], get_available_languages(), "OK")
 
-    def test_create_network_postcommit_ac_simulate(self):
-        context = mock.Mock(current=test_network_object_sent)
-        resp = self._mock_req_resp(requests.codes.no_content)
-        cfg.CONF.set_override('simulator', True, 'ml2_huawei_ac')
-        with mock.patch('requests.request',
-                        return_value=resp):
-            self.create_network_postcommit(context)
-        cfg.CONF.set_override('simulator', False, 'ml2_huawei_ac')
-
     def test_create_network_postcommit_key_error(self):
         del test_port_object_sent['id']
         context = mock.Mock(current=test_port_object_sent)

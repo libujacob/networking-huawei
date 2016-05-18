@@ -34,7 +34,6 @@ class RestClient(object):
         self.timeout = float(cfg.CONF.ml2_huawei_ac.request_timeout)
         self.timeout_retry = int(cfg.CONF.ml2_huawei_ac.timeout_retry)
         self.token_retry = int(cfg.CONF.ml2_huawei_ac.token_retry)
-        self.ac_simulate = cfg.CONF.ml2_huawei_ac.simulator
 
     # Send the JSON message to the controller
     def send(self, host, port, method, url,
@@ -54,13 +53,6 @@ class RestClient(object):
 
         LOG.debug('Send the request information, method: %s, url: %s, '
                   'headers: %s, data:%s', method, url, headers, params)
-
-        if self.ac_simulate:
-            result['response'] = 'OK'
-            result['status'] = requests.codes.ok
-            result['errorCode'] = '0'
-            result['reason'] = 'Good'
-            return result
 
         ret = self.process_request(method, url, headers, params)
 
