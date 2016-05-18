@@ -1,4 +1,3 @@
-# coding:utf-8
 # Copyright (c) 2016 OpenStack Foundation.
 # All Rights Reserved.
 #
@@ -23,8 +22,8 @@ from networking_huawei._i18n import _
 
 HUAWEI_AC_DRIVER_OPTS = [
     cfg.StrOpt('host',
-               default='192.168.118.10',
-               help=_('AC ReST interface IP')),
+               default='',
+               help=_('AC ReST interface IP.')),
     cfg.IntOpt('port',
                default=32102,
                help=_("AC ReST interface port number.")),
@@ -37,22 +36,22 @@ HUAWEI_AC_DRIVER_OPTS = [
                help=_('Password for authentication.')),
     cfg.StrOpt('neutron_name',
                default='NeutronServer1',
-               help=_('Neutron server name')),
+               help=_('Neutron server name.')),
     cfg.StrOpt('neutron_ip',
-               default='10.10.10.10',
-               help=_('Neutron server ip')),
+               default='',
+               help=_('Neutron server ip.')),
     cfg.StrOpt('service_name',
                default='physnet1',
-               help=_('Service name')),
+               help=_('Service name.')),
     cfg.IntOpt('request_timeout',
                default=60,
-               help=_('AC REST request timeout value')),
+               help=_('AC REST request timeout value.')),
     cfg.IntOpt('timeout_retry',
                default=3,
-               help=_('AC REST request timeout retry count')),
+               help=_('AC REST request timeout retry count.')),
     cfg.IntOpt('token_retry',
                default=3,
-               help=_('AC token retry count'))
+               help=_('AC token retry count.'))
 ]
 
 cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "ml2_huawei_ac")
