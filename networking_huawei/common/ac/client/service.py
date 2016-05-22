@@ -24,9 +24,9 @@ LOG = logging.getLogger(__name__)
 class RESTService(object):
 
     def __init__(self):
-        self.host = cfg.CONF.ml2_huawei_ac.host
-        self.port = cfg.CONF.ml2_huawei_ac.port
-        self.serviceName = cfg.CONF.ml2_huawei_ac.service_name
+        self.host = cfg.CONF.huawei_ac_config.host
+        self.port = cfg.CONF.huawei_ac_config.port
+        self.serviceName = cfg.CONF.huawei_ac_config.service_name
         self.url = '%s%s%s%s' % ("http://", self.host, ":", str(self.port))
 
     def requestREST(self, method, url, id, body,

@@ -161,8 +161,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.create_router(context, router_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
-                  + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL \
+        tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
+                  + str(cfg.CONF.huawei_ac_config.port) + ac_const.AC_URL \
                   + '/' \
                   + ac_const.AC_NEUTRON_RESOURCES['create_router']['rsrc']
         params = jsonutils.dumps(body)
@@ -199,8 +199,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.create_router(context, router_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
-                  + str(cfg.CONF.ml2_huawei_ac.port) \
+        tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
+                  + str(cfg.CONF.huawei_ac_config.port) \
                   + ac_const.AC_URL + '/' \
                   + ac_const.AC_NEUTRON_RESOURCES[
                       'create_router']['rsrc']
@@ -294,8 +294,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.delete_router(context, fake_router_db['id'])
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
-                  + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL + '/' + \
+        tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
+                  + str(cfg.CONF.huawei_ac_config.port) + ac_const.AC_URL + '/' + \
                   ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] \
                   + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
@@ -318,8 +318,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router = HuaweiACL3RouterPlugin()
                 acl3router.delete_router(context, fake_router_db['id'])
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
-                  + str(cfg.CONF.ml2_huawei_ac.port) \
+        tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
+                  + str(cfg.CONF.huawei_ac_config.port) \
                   + ac_const.AC_URL + '/' + \
                   ac_const.AC_NEUTRON_RESOURCES['delete_router']['rsrc'] \
                   + '/' + fake_router_db['id']
@@ -353,7 +353,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
         router_in = {'portId': interface_info['port_id'],
                      'routerId': fake_router_db['id'],
-                     'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
+                     'serviceName': cfg.CONF.huawei_ac_config.service_name,
                      'tenant_id': router_info['router']['tenant_id']}
 
         body = {'routerInterface': router_in}
@@ -372,8 +372,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                                     fake_router_db['id'],
                                                     interface_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
-                  + str(cfg.CONF.ml2_huawei_ac.port) + ac_const.AC_URL \
+        tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
+                  + str(cfg.CONF.huawei_ac_config.port) + ac_const.AC_URL \
                   + '/' \
                   + ac_const.AC_NEUTRON_RESOURCES[
                       'add_router_interface']['rsrc'] \
@@ -452,7 +452,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
 
         router_in = {'portId': interface_info['port_id'],
                      'id': fake_router_db['id'],
-                     'serviceName': cfg.CONF.ml2_huawei_ac.service_name,
+                     'serviceName': cfg.CONF.huawei_ac_config.service_name,
                      'tenant_id': router_info['router']['tenant_id']
                      }
 
@@ -471,8 +471,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                                        fake_router_db['id'],
                                                        interface_info)
 
-        tst_url = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" \
-                  + str(cfg.CONF.ml2_huawei_ac.port) \
+        tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
+                  + str(cfg.CONF.huawei_ac_config.port) \
                   + ac_const.AC_URL + '/' \
                   + ac_const.AC_NEUTRON_RESOURCES['delete_router_interface']['rsrc'] \
                   + '/' + fake_router_db['id']

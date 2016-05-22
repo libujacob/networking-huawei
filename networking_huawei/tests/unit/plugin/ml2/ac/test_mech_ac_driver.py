@@ -481,12 +481,12 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         self.set_test_config()
 
     def set_test_config(self):
-        cfg.CONF.set_override('host', '127.0.0.1', 'ml2_huawei_ac')
-        cfg.CONF.set_override('port', '2222', 'ml2_huawei_ac')
-        cfg.CONF.set_override('username', 'huawei_user', 'ml2_huawei_ac')
-        cfg.CONF.set_override('password', 'huawei_pwd', 'ml2_huawei_ac')
-        self.ml2_huawei_path = "http://" + cfg.CONF.ml2_huawei_ac.host + ":" + \
-                               str(cfg.CONF.ml2_huawei_ac.port)
+        cfg.CONF.set_override('host', '127.0.0.1', 'huawei_ac_config')
+        cfg.CONF.set_override('port', '2222', 'huawei_ac_config')
+        cfg.CONF.set_override('username', 'huawei_user', 'huawei_ac_config')
+        cfg.CONF.set_override('password', 'huawei_pwd', 'huawei_ac_config')
+        self.ml2_huawei_path = "http://" + cfg.CONF.huawei_ac_config.host + ":" + \
+                               str(cfg.CONF.huawei_ac_config.port)
 
     def _mock_req_resp(self, status_code):
         response = mock.Mock()
@@ -565,7 +565,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 oper_type,
                 headers={'Content-type': 'application/json',
                          'Accept': 'application/json'},
-                timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
+                timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
                 verify=False,
                 **kwargs)
         else:
@@ -573,7 +573,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 oper_type,
                 headers={'Content-type': 'application/json',
                          'Accept': 'application/json'},
-                timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
+                timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
                 verify=False,
                 **kwargs)
 
@@ -631,7 +631,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             oper_type,
             headers={'Content-type': 'application/json',
                      'Accept': 'application/json'},
-            timeout=float(cfg.CONF.ml2_huawei_ac.request_timeout),
+            timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
             verify=False,
             **kwargs)
 

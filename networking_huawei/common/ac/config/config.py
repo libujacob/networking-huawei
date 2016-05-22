@@ -53,4 +53,4 @@ HUAWEI_AC_DRIVER_OPTS = [
                help=_('AC token retry count.'))
 ]
 
-cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "ml2_huawei_ac")
+cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "huawei_ac_config")
