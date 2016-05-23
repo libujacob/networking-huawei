@@ -82,7 +82,7 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
     @log_helpers.log_method_call
     def get_plugin_description(self):
         """returns string description of the plugin."""
-        return (ac_const.AC_L3_DESCRIPTION)
+        return (ac_const.NW_HW_L3_DESCRIPTION)
 
     @log_helpers.log_method_call
     def create_router(self, context, router):
@@ -169,10 +169,11 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
 
     @log_helpers.log_method_call
     def __rest_request__(self, res_id, entry_info, operation):
-        if operation in ac_const.AC_NEUTRON_RESOURCES:
-            methodname = ac_const.AC_NEUTRON_RESOURCES[operation]['method']
-            url = '%s%s%s' % (ac_const.AC_URL, '/',
-                              ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc'])
+        if operation in ac_const.NW_HW_NEUTRON_RESOURCES:
+            methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+            url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
+                              ac_const.NW_HW_NEUTRON_RESOURCES
+                              [operation]['rsrc'])
             service = RESTService()
             service.requestService(methodname, url, res_id,
                                    entry_info, False, self.__callBack__)

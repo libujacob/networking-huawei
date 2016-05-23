@@ -255,10 +255,10 @@ def _set_security_group_rule(rule):
 @log_helpers.log_method_call
 def rest_request(id, entry_info, operation):
 
-    if operation in ac_const.AC_NEUTRON_RESOURCES:
-        methodname = ac_const.AC_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.AC_URL, '/',
-                          ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc'])
+    if operation in ac_const.NW_HW_NEUTRON_RESOURCES:
+        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
+                          ac_const.NW_HW_NEUTRON_RESOURCES[operation]['rsrc'])
         service = RESTService()
 
         LOG.debug("The ac data is: %s.", jsonutils.dumps(entry_info))
@@ -600,12 +600,14 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
 
     @log_helpers.log_method_call
     def __restRequest__(self, id, entry_info, operation):
-        if operation in ac_const.AC_NEUTRON_RESOURCES:
+        if operation in ac_const.NW_HW_NEUTRON_RESOURCES:
             isneedservicename = \
-                ac_const.AC_NEUTRON_RESOURCES[operation]['needSvcNameUpdate']
-            methodname = ac_const.AC_NEUTRON_RESOURCES[operation]['method']
-            url = '%s%s%s' % (ac_const.AC_URL, '/',
-                              ac_const.AC_NEUTRON_RESOURCES[operation]['rsrc'])
+                ac_const.NW_HW_NEUTRON_RESOURCES[operation][
+                    'needSvcNameUpdate']
+            methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+            url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
+                              ac_const.NW_HW_NEUTRON_RESOURCES[operation][
+                                  'rsrc'])
 
             service = RESTService()
             service.requestService(methodname,
