@@ -16,10 +16,12 @@
 
 import copy
 import mock
-import networking_huawei.common.ac.client.restclient as ac_rest
-from networking_huawei.common.ac import constants as ac_const
-from networking_huawei.common import exceptions as ml2_exc
-from networking_huawei.plugins.l3.ac.driver import HuaweiACL3RouterPlugin
+import requests
+from webob import exc
+
+from oslo_config import cfg
+from oslo_serialization import jsonutils
+
 from neutron.db.l3_db import L3_NAT_db_mixin
 from neutron.db.l3_dvr_db import L3_NAT_with_dvr_db_mixin
 from neutron.db.l3_hamode_db import L3_HA_NAT_db_mixin
@@ -27,10 +29,11 @@ from neutron.extensions import l3
 from neutron.plugins.common import constants
 from neutron.tests.unit.api.v2 import test_base
 from neutron.tests.unit.extensions import base as test_neutron_extensions
-from oslo_config import cfg
-from oslo_serialization import jsonutils
-import requests
-from webob import exc
+
+from networking_huawei.common import constants as ac_const
+from networking_huawei.common import exceptions as ml2_exc
+import networking_huawei.huawei.ac.client.restclient as ac_rest
+from networking_huawei.plugins.l3.ac.driver import HuaweiACL3RouterPlugin
 
 fake_tenant_id = '048aa98a3ec345dc8b14427c81e276cf'
 
