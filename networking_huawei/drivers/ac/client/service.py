@@ -15,7 +15,7 @@
 from oslo_config import cfg
 from oslo_log import log as logging
 
-from networking_huawei.huawei.ac.client.restclient import RestClient
+from networking_huawei.drivers.ac.client.restclient import RestClient
 
 LOG = logging.getLogger(__name__)
 

@@ -26,8 +26,8 @@ from neutron.plugins.ml2 import driver_context as ctx
 
 from networking_huawei._i18n import get_available_languages
 from networking_huawei.common import exceptions as ml2_exc
-import networking_huawei.huawei.ac.client.restclient as ac_rest
-import networking_huawei.huawei.ac.client.service as ac_service
+import networking_huawei.drivers.ac.client.restclient as ac_rest
+import networking_huawei.drivers.ac.client.service as ac_service
 import networking_huawei.plugins.ml2.ac.driver as huawei_ml2_driver
 from networking_huawei.plugins.ml2.ac.driver import HuaweiACMechanismDriver
 

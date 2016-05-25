@@ -32,7 +32,7 @@ from neutron.tests.unit.extensions import base as test_neutron_extensions
 
 from networking_huawei.common import constants as ac_const
 from networking_huawei.common import exceptions as ml2_exc
-import networking_huawei.huawei.ac.client.restclient as ac_rest
+import networking_huawei.drivers.ac.client.restclient as ac_rest
 from networking_huawei.plugins.l3.ac.driver import HuaweiACL3RouterPlugin
 
 fake_tenant_id = '048aa98a3ec345dc8b14427c81e276cf'

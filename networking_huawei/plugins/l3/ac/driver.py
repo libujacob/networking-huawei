@@ -33,8 +33,8 @@ from networking_huawei._i18n import _LE
 from networking_huawei._i18n import _LI
 from networking_huawei.common import constants as ac_const
 from networking_huawei.common import exceptions as ml2_exc
-from networking_huawei.huawei.ac.client.service import RESTService
-from networking_huawei.huawei.ac.config import config  # noqa
+from networking_huawei.drivers.ac.client.service import RESTService
+from networking_huawei.drivers.ac.config import config  # noqa
 
 
 LOG = logging.getLogger(__name__)
