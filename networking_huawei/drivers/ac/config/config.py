@@ -21,36 +21,44 @@ from networking_huawei._i18n import _
 
 HUAWEI_AC_DRIVER_OPTS = [
     cfg.StrOpt('host',
-               default='',
-               help=_('AC ReST interface IP.')),
+               default='127.0.0.1',
+               help=_('Huawei Agile Controller(AC) REST host address. '
+                      'If this is not set then no HTTP requests will '
+                      'be made.')),
     cfg.IntOpt('port',
                default=32102,
-               help=_("AC ReST interface port number.")),
+               help=_('Huawei Agile Controller(AC) ReST interface port'
+                      ' number.')),
     cfg.StrOpt('username',
-               default='',
-               help=_('Username for authentication.')),
+               default='huawei',
+               help=_('Username to authenticate the connect to AC. '
+                      'This is a mandatory field to authenticate the AC.')),
     cfg.StrOpt('password',
-               default='',
+               default='Huawei@123',
                secret=True,  # do not expose value in the logs
-               help=_('Password for authentication.')),
+               help=_('Password to authenticate the connect to AC. '
+                      'This is a mandatory field to authenticate the AC.')),
     cfg.StrOpt('neutron_name',
-               default='NeutronServer1',
-               help=_('Neutron server name.')),
+               default='Neutron_Server1',
+               help=_('Neutron server host name. This is a mandatory field.')),
     cfg.StrOpt('neutron_ip',
-               default='',
-               help=_('Neutron server ip.')),
+               default='127.0.0.1',
+               help=_('Neutron server ip. This is a mandatory field.')),
     cfg.StrOpt('service_name',
                default='physnet1',
                help=_('Service name.')),
     cfg.IntOpt('request_timeout',
                default=60,
-               help=_('AC REST request timeout value.')),
+               help=_('AC HTTP request timeout value in seconds. This is an '
+                      'optional parameter, default value is 60 seconds.')),
     cfg.IntOpt('timeout_retry',
                default=3,
-               help=_('AC REST request timeout retry count.')),
+               help=_('AC HTTP request timeout retry count. This is an '
+                      'optional parameter, default retry is 3.')),
     cfg.IntOpt('token_retry',
                default=3,
-               help=_('AC token retry count.'))
+               help=_('AC token retry count. This is an optional parameter, '
+                      'default retry is 3.'))
 ]
 
 cfg.CONF.register_opts(HUAWEI_AC_DRIVER_OPTS, "huawei_ac_config")
