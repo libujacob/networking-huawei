@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 
 DIR_HUAWEI=$DEST/networking-huawei
+NW_HUAWEI_AC_CONF_FILE=${NW_HUAWEI_AC_CONF_FILE:-"$NEUTRON_CONF_DIR/huawei_driver_config.ini"}
+
+
+function configure_ac_driver {
+    cp $DIR_HUAWEI/etc/huawei_driver_config.ini.sample $NW_HUAWEI_AC_CONF_FILE
+}
+
+#This API will be called for phase "post-config"
+function ac_generate_config_files {
+    (cd $DIR_HUAWEI && exec ./tools/generate_config_file_samples.sh)
+}
+
+function ac_post_configure {
+    if is_service_enabled huawei-ac; then
+        ac_generate_config_files
+        configure_ac_driver
+    fi
+}
 
 function install_networking_huawei {
     cd $DIR_HUAWEI
@@ -22,6 +40,7 @@ if is_service_enabled huawei-ac; then
         install_networking_huawei
     elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
         echo "Post config Huawei AC"
+        ac_post_configure
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
         echo "Starting Huawei AC"
     fi
