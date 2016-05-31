@@ -30,19 +30,19 @@ HUAWEI_AC_DRIVER_OPTS = [
                help=_('Huawei Agile Controller(AC) ReST interface port'
                       ' number.')),
     cfg.StrOpt('username',
-               default='huawei',
+               required=True,
                help=_('Username to authenticate the connect to AC. '
                       'This is a mandatory field to authenticate the AC.')),
     cfg.StrOpt('password',
-               default='Huawei@123',
                secret=True,  # do not expose value in the logs
+               required=True,
                help=_('Password to authenticate the connect to AC. '
                       'This is a mandatory field to authenticate the AC.')),
     cfg.StrOpt('neutron_name',
-               default='Neutron_Server1',
+               required=True,
                help=_('Neutron server host name. This is a mandatory field.')),
     cfg.StrOpt('neutron_ip',
-               default='127.0.0.1',
+               required=True,
                help=_('Neutron server ip. This is a mandatory field.')),
     cfg.StrOpt('service_name',
                default='physnet1',
