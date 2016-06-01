@@ -12,8 +12,13 @@
 
 import itertools
 
+from oslo_config import cfg
+
 import networking_huawei
 from networking_huawei.drivers.ac.config import config  # noqa
+
+
+cfg.CONF.register_opts([], "huawei_dummy_config")
 
 
 def list_ac_opts():
@@ -21,5 +26,14 @@ def list_ac_opts():
         ('huawei_ac_config',
          itertools.chain(
              networking_huawei.drivers.ac.config.config.HUAWEI_AC_DRIVER_OPTS)
+         )
+    ]
+
+
+def list_dummy_opts():
+    return [
+        ('huawei_dummy_config',
+         itertools.chain(
+             [])
          )
     ]
