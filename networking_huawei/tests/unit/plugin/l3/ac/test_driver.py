@@ -95,6 +95,10 @@ fake_rest_headers = {"Content-type": "application/json",
 
 class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
     def setUp(self):
+        cfg.CONF.set_override('username', 'huawei_user', 'huawei_ac_config')
+        cfg.CONF.set_override('password', 'huawei_pwd', 'huawei_ac_config')
+        cfg.CONF.set_override('neutron_ip', '127.0.0.1', 'huawei_ac_config')
+        cfg.CONF.set_override('neutron_name', 'NS_1', 'huawei_ac_config')
         super(HuaweiACL3RouterPluginTest, self).setUp()
         self._setUpExtension(
             'neutron.extensions.l3.RouterPluginBase', None,
