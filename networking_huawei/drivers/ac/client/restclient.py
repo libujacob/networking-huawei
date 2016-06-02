@@ -28,8 +28,8 @@ LOG = logging.getLogger(__name__)
 class RestClient(object):
     # Initialized and reads the configuration file base parameters
     def __init__(self):
-        self.username = cfg.CONF.huawei_ac_config.username
-        self.password = cfg.CONF.huawei_ac_config.password
+        self.ac_auth = (cfg.CONF.huawei_ac_config.username,
+                        cfg.CONF.huawei_ac_config.password)
         self.timeout = float(cfg.CONF.huawei_ac_config.request_timeout)
         self.timeout_retry = int(cfg.CONF.huawei_ac_config.timeout_retry)
         self.token_retry = int(cfg.CONF.huawei_ac_config.token_retry)

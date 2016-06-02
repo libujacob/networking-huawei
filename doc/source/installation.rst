@@ -56,7 +56,9 @@ There must be an Agile Controller 2.0 running in a machine which is reachable fr
             [ml2_huawei]
             host = 192.167.1.10
             username = admin
-            password = Rc9xv1SFCfoS+7wmfNS7pQ==
+            password = admin@huawei
+            neutron_name = NeutronServer1
+            neutron_ip = 10.10.10.10
 
             [ovs]
             integration_bridge = br-int
