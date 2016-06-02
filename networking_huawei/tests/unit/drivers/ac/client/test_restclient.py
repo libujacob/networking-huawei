@@ -41,6 +41,11 @@ test_create_network_req = {'network':
 class HuaweiACRestClientTestCase(base.BaseTestCase):
 
     def setUp(self):
+        cfg.CONF.set_override('username', 'huawei_user', 'huawei_ac_config')
+        cfg.CONF.set_override('password', 'huawei_pwd', 'huawei_ac_config')
+        cfg.CONF.set_override('neutron_ip', '127.0.0.1', 'huawei_ac_config')
+        cfg.CONF.set_override('neutron_name', 'NS_1', 'huawei_ac_config')
+
         super(HuaweiACRestClientTestCase, self).setUp()
         self.restc = ac_rest.RestClient
         self.host = cfg.CONF.huawei_ac_config.host
@@ -126,7 +131,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
     def test_rc_process_request(self):
         operation = 'delete_subnet'
         methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        auth = ('admin', 'admin@123')
+        auth = (cfg.CONF.huawei_ac_config.username,
+                cfg.CONF.huawei_ac_config.password)
         url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
                           ac_const.NW_HW_NEUTRON_RESOURCES
                           [operation]['rsrc'])
@@ -168,7 +174,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
     def test_rc_process_request_timeout_exception(self):
         operation = 'delete_subnet'
         methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        auth = ('admin', 'admin@123')
+        auth = (cfg.CONF.huawei_ac_config.username,
+                cfg.CONF.huawei_ac_config.password)
         url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
                           ac_const.NW_HW_NEUTRON_RESOURCES
                           [operation]['rsrc'])
@@ -210,7 +217,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
     def test_rc_process_request_exception(self):
         operation = 'delete_subnet'
         methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        auth = ('admin', 'admin@123')
+        auth = (cfg.CONF.huawei_ac_config.username,
+                cfg.CONF.huawei_ac_config.password)
         url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
                           ac_const.NW_HW_NEUTRON_RESOURCES
                           [operation]['rsrc'])
