@@ -150,16 +150,20 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
             ac_rest.RestClient().process_request(methodname, auth,
                                                  url, headers,
                                                  data)
-            mock_method.assert_called_once_with(methodname,
-                                                headers={'Content-type':
-                                                         'application/json',
-                                                         'Accept':
-                                                         'application/json'},
-                                                timeout=float(cfg.CONF.
-                                                              huawei_ac_config.
-                                                              request_timeout),
-                                                verify=False,
-                                                **kwargs)
+            mock_method.\
+                assert_called_once_with(
+                    methodname,
+                    headers={'Content-type':
+                             'application/json',
+                             'Accept':
+                             'application/json'},
+                    timeout=float(cfg.CONF.
+                                  huawei_ac_config.
+                                  request_timeout),
+                    verify=False,
+                    auth=(cfg.CONF.huawei_ac_config.username,
+                          cfg.CONF.huawei_ac_config.password),
+                    **kwargs)
 
     def test_rc_process_request_timeout_exception(self):
         operation = 'delete_subnet'
@@ -189,16 +193,19 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
                 Timeout(mock.Mock(msg="Timeout Exceptions"))
             ac_rest.RestClient().\
                 process_request(methodname, auth, url, headers, data)
-            mock_method.assert_any_call(methodname,
-                                        headers={'Content-type':
-                                                 'application/json',
-                                                 'Accept':
-                                                 'application/json'},
-                                        timeout=float(cfg.CONF.
-                                                      huawei_ac_config.
-                                                      request_timeout),
-                                        verify=False,
-                                        **kwargs)
+            mock_method.\
+                assert_any_call(methodname,
+                                headers={'Content-type':
+                                         'application/json',
+                                         'Accept':
+                                         'application/json'},
+                                timeout=float(cfg.CONF.
+                                              huawei_ac_config.
+                                              request_timeout),
+                                verify=False,
+                                auth=(cfg.CONF.huawei_ac_config.username,
+                                      cfg.CONF.huawei_ac_config.password),
+                                **kwargs)
 
     def test_rc_process_request_exception(self):
         operation = 'delete_subnet'
@@ -229,16 +236,19 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
             ac_rest.RestClient().process_request(methodname, auth,
                                                  url,
                                                  headers, data)
-            mock_method.assert_any_call(methodname,
-                                        headers={'Content-type':
-                                                 'application/json',
-                                                 'Accept':
-                                                 'application/json'},
-                                        timeout=float(cfg.CONF.
-                                                      huawei_ac_config.
-                                                      request_timeout),
-                                        verify=False,
-                                        **kwargs)
+            mock_method.\
+                assert_any_call(methodname,
+                                headers={'Content-type':
+                                         'application/json',
+                                         'Accept':
+                                         'application/json'},
+                                timeout=float(cfg.CONF.
+                                              huawei_ac_config.
+                                              request_timeout),
+                                verify=False,
+                                auth=(cfg.CONF.huawei_ac_config.username,
+                                      cfg.CONF.huawei_ac_config.password),
+                                **kwargs)
 
     def test_rc_send_http_success(self):
         http = {'errorCode': None, 'reason': None,
