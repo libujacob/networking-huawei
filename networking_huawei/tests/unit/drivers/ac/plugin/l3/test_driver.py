@@ -173,9 +173,12 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                   + '/' \
                   + ac_const.NW_HW_NEUTRON_RESOURCES['create_router']['rsrc']
         params = jsonutils.dumps(body)
-        mock_method.assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
-                                            ['create_router']['method'],
-                                            tst_url, fake_rest_headers, params)
+        mock_method.\
+            assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
+                                    ['create_router']['method'],
+                                    (cfg.CONF.huawei_ac_config.username,
+                                     cfg.CONF.huawei_ac_config.password),
+                                    tst_url, fake_rest_headers, params)
 
     def test_create_router_no_content(self):
         router_info = copy.deepcopy(fake_router_object)
@@ -212,10 +215,13 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                   + ac_const.NW_HW_NEUTRON_RESOURCES[
                       'create_router']['rsrc']
         params = jsonutils.dumps(body)
-        mock_method.assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
-                                            ['create_router']['method'],
-                                            tst_url,
-                                            fake_rest_headers, params)
+        mock_method.\
+            assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
+                                    ['create_router']['method'],
+                                    (cfg.CONF.huawei_ac_config.username,
+                                     cfg.CONF.huawei_ac_config.password),
+                                    tst_url,
+                                    fake_rest_headers, params)
 
     def test_create_router_failure(self):
         router_info = copy.deepcopy(fake_router_object)
@@ -307,10 +313,13 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                   ac_const.NW_HW_NEUTRON_RESOURCES['delete_router']['rsrc'] \
                   + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
-        mock_method.assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
-                                            ['delete_router']['method'],
-                                            tst_url,
-                                            fake_rest_headers, params)
+        mock_method.\
+            assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
+                                    ['delete_router']['method'],
+                                    (cfg.CONF.huawei_ac_config.username,
+                                     cfg.CONF.huawei_ac_config.password),
+                                    tst_url,
+                                    fake_rest_headers, params)
 
     def test_delete_router_direct_failure(self):
         router_info = copy.deepcopy(fake_router_object)
@@ -332,9 +341,12 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                   ac_const.NW_HW_NEUTRON_RESOURCES['delete_router']['rsrc'] \
                   + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
-        mock_method.assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
-                                            ['delete_router']['method'],
-                                            tst_url, fake_rest_headers, params)
+        mock_method.\
+            assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
+                                    ['delete_router']['method'],
+                                    (cfg.CONF.huawei_ac_config.username,
+                                     cfg.CONF.huawei_ac_config.password),
+                                    tst_url, fake_rest_headers, params)
 
     def test_add_router_interface(self):
         interface_info = {'tenant_id': fake_tenant_id,
@@ -388,9 +400,12 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                   + '/' \
                   + fake_router_db['id']
         params = jsonutils.dumps(body)
-        mock_method.assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
-                                            ['add_router_interface']['method'],
-                                            tst_url, fake_rest_headers, params)
+        mock_method.\
+            assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
+                                    ['add_router_interface']['method'],
+                                    (cfg.CONF.huawei_ac_config.username,
+                                     cfg.CONF.huawei_ac_config.password),
+                                    tst_url, fake_rest_headers, params)
 
     def test_add_router_interface_key_error_exception(self):
         router_info = copy.deepcopy(fake_router_object)
@@ -486,12 +501,15 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                                      '_interface']['rsrc'] \
                   + '/' + fake_router_db['id']
         params = jsonutils.dumps(router_in)
-        mock_method.assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
-                                            ['delete_router_interface']
-                                            ['method'],
-                                            tst_url,
-                                            fake_rest_headers,
-                                            params)
+        mock_method.\
+            assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
+                                    ['delete_router_interface']
+                                    ['method'],
+                                    (cfg.CONF.huawei_ac_config.username,
+                                     cfg.CONF.huawei_ac_config.password),
+                                    tst_url,
+                                    fake_rest_headers,
+                                    params)
 
     def _verify_resp(self, resp, return_code, context, id):
         self.assertEqual(resp.status_int, return_code)
