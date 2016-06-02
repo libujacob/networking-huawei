@@ -38,7 +38,7 @@ class RESTService(object):
 
     def requestService(self, method, url, id, body, isNeedServiceName=None,
                        callBack=None):
-        LOG.debug('Request Service has been called.')
+        LOG.debug('Request service has been called.')
         client = RestClient()
         if isNeedServiceName is True:
             for key in body:
@@ -52,9 +52,9 @@ class RESTService(object):
         }
         result = self.__doRequestSerive__(data='', status='', reason='')
         if client.http_success(result):
-            LOG.debug('AC: request is success.')
+            LOG.debug('AC request is success.')
         else:
-            LOG.debug('AC: request failed.')
+            LOG.debug('AC request failed.')
 
     def __doRequestSerive__(self, data, status, reason):
 

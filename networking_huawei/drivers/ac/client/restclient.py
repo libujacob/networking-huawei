@@ -32,7 +32,7 @@ class RestClient(object):
                         cfg.CONF.huawei_ac_config.password)
         self.timeout = float(cfg.CONF.huawei_ac_config.request_timeout)
         self.timeout_retry = int(cfg.CONF.huawei_ac_config.timeout_retry)
-        self.token_retry = int(cfg.CONF.huawei_ac_config.token_retry)
+        self.retry_count = int(cfg.CONF.huawei_ac_config.token_retry)
 
     # Send the JSON message to the controller
     def send(self, host, port, method, url,
@@ -56,14 +56,14 @@ class RestClient(object):
         ret = self.process_request(method, self.ac_auth, url, headers, params)
 
         if ("Timeout Exceptions" == ret) or ("Exceptions" == ret):
-            LOG.error(_LE("Request to AC failed, ret: %s"), ret)
+            LOG.error(_LE("Request to AC failed, error: %s"), ret)
             result['response'] = None
             result['status'] = -1
             result['errorCode'] = None
             result['reason'] = None
             return result
 
-        LOG.debug("AC request result, status_code: %s, content: %s, "
+        LOG.debug("AC request response, status_code: %s, content: %s, "
                   "headers: %s", ret.status_code,
                   ret.content, ret.headers)
 
@@ -71,9 +71,9 @@ class RestClient(object):
         res_content = ret.content
         try:
             if requests.codes.ok <= res_code < requests.codes.multiple_choices:
-                LOG.debug('AC process request successfully.')
+                LOG.debug('AC processed request successfully.')
                 res = self.fix_json(res_content)
-                LOG.debug("send: response body is %s", res)
+                LOG.debug("Send: response body is %s", res)
                 if not res_content.strip():
                     result['response'] = None
                     result['status'] = ret.status_code
@@ -87,10 +87,10 @@ class RestClient(object):
                     result['reason'] = res1['errorMsg']
             else:
                 LOG.error(_LE('AC process request failed.'))
-                if self.token_retry > 0 and \
+                if self.retry_count > 0 and \
                    requests.codes.unauthorized == res_code:
-                    LOG.debug('AC:TokenId expired, get again')
-                    self.token_retry -= 1
+                    LOG.debug('Retrying the request to AC')
+                    self.retry_count -= 1
                     (res_code, res_content) = self.send(host, port, method,
                                                         url,
                                                         resrc_id, body,
@@ -110,7 +110,7 @@ class RestClient(object):
         if callback is not None:
             callback(result['errorCode'], result['reason'], result['status'])
         else:
-            LOG.debug("call back is null")
+            LOG.debug("Call back for the REST is not set.")
 
         return result
 
@@ -133,14 +133,14 @@ class RestClient(object):
             except requests.exceptions.Timeout:
                 temp_ret = "Timeout Exceptions"
                 LOG.error(_LE("Exception: AC time out, "
-                              "traceback:%s"), traceback.format_exc())
+                              "traceback: %s"), traceback.format_exc())
                 timeout_retry -= 1
                 if timeout_retry < 0:
                     ret = "Timeout Exceptions"
                     break
 
             except Exception:
-                LOG.error(_LE("Exception: AC exception, traceback:%s"),
+                LOG.error(_LE("Exception: AC exception, traceback: %s"),
                           traceback.format_exc())
                 timeout_retry -= 1
                 if timeout_retry < 0:
@@ -151,7 +151,7 @@ class RestClient(object):
                     break
 
         if ("Timeout Exceptions" == ret) or ("Exceptions" == ret):
-            LOG.error(_LE('AC: request failed, return code:%s') % ret)
+            LOG.error(_LE('Request to AC failed, error code: %s') % ret)
             return ret
 
         return ret

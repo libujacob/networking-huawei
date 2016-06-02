@@ -626,10 +626,10 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
     def __callBack__(self, errorCode, reason, status):
         if status == req_code.ok and reason is None:
             if errorCode != '0':
-                LOG.debug("Error code not 0, raise mechanism driver error.")
+                LOG.debug("Error code not ok, report mechanism driver error.")
                 raise ml2_exc.MechanismDriverError(method='__callBack__')
         elif status == req_code.no_content:
             pass
         else:
-            LOG.debug("Status not ok, raise mechanism driver error.")
+            LOG.debug("Status not ok, report mechanism driver error.")
             raise ml2_exc.MechanismDriverError(method='__callBack__')
