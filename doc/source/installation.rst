@@ -21,15 +21,13 @@ from the Neutron Server.
 2.1 DevStack deployment
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-     1. Download the DevStack
-        *"git clone https://git.openstack.org/openstack-dev/devstack"*.
-     2. Create user stack
-        *"devstack/tools/create-stack-user.sh; su stack"*.
-     3. Move inside the DevStack
-        *"cd devstack"*.
-     4. Add networking huawei plugin to the *local.conf/localrc* file
-        *"enable_plugin networking-huawei https://github.com/openstack/
-        networking-huawei.git master"*.
+     1. Download the DevStack.
+         *"git clone https://git.openstack.org/openstack-dev/devstack"*.
+     2. Create user "stack".
+         *"devstack/tools/create-stack-user.sh; su stack"*.
+     3. Move inside the devstack folder.
+         *"cd devstack"*.
+     4. Add networking huawei plugin to the *local.conf/localrc* file.
 
       ::
 
@@ -39,7 +37,7 @@ from the Neutron Server.
           enable_plugin networking-huawei https://github.com/openstack/networking-huawei.git master
 
      5. Update the configuration for AC in *local.conf/localrc* file under
-        *ml2_huawei* namespace.
+        *ml2_huawei* namespace if required.
      6. Else, download the plugin code
         *"git clone https://github.com/openstack/networking-huawei.git"* and
         copy *local.conf.sample.controller* file to *devstack* folder and
@@ -50,9 +48,9 @@ from the Neutron Server.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-     1. Install the plugin
-        *"pip install git+git://git.openstack.org/openstack/
-        networking-huawei"*.
+     1. Install the plugin first.
+         *"pip install git+git://git.openstack.org/openstack/
+         networking-huawei"*.
 
      2. Update /etc/neutron/plugins/ml2/ml2_conf.ini for L2 plugin.
 
@@ -75,12 +73,6 @@ from the Neutron Server.
             neutron_name = NeutronServer1
             neutron_ip = 10.10.10.10
 
-            [ovs]
-            integration_bridge = br-int
-            tunnel_id_ranges = 65537:69999
-            tenant_network_type = vxlan
-            enable_tunneling = true
-            tunnel_type = vxlan
 
      3. Update /etc/neutron/neutron.conf for L3 router plugin.
 
