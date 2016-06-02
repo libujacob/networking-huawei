@@ -19,9 +19,9 @@ import requests
 from oslo_config import cfg
 from oslotest import base
 
-from networking_huawei.common import constants as ac_const
 import networking_huawei.drivers.ac.client.restclient as ac_rest
 import networking_huawei.drivers.ac.client.service as ac_rest_service
+from networking_huawei.drivers.ac.common import config  # noqa
 
 
 test_create_network_req = {'network':
@@ -49,11 +49,8 @@ class HuaweiACRestServiceTestCase(base.BaseTestCase):
         self.url = '%s%s%s%s' % ("http://", self.host, ":", str(self.port))
 
     def test_service_requestREST(self):
-        operation = 'create_network'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'POST'
+        url = '/controller/dc/esdk/v2.0/test_url'
         expected_resp = {'errorCode': u'0', 'reason': None,
                          'response': 'ok', 'status': 204}
         with mock.patch.object(self.ac_rest, 'send',
@@ -62,29 +59,20 @@ class HuaweiACRestServiceTestCase(base.BaseTestCase):
                                           test_create_network_req)
 
     def test_service_requestService(self):
-        operation = 'create_network'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'POST'
+        url = '/controller/dc/esdk/v2.0/test_url'
         self.rest_service.requestService(methodname, url, hex(10),
                                          test_create_network_req)
 
     def test_service_requestService_servicename(self):
-        operation = 'create_network'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'POST'
+        url = '/controller/dc/esdk/v2.0/test_url'
         self.rest_service.requestService(methodname, url, hex(10),
                                          test_create_network_req, True)
 
     def test_service_requestService_success(self):
-        operation = 'create_network'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'POST'
+        url = '/controller/dc/esdk/v2.0/test_url'
         expected_resp = {'errorCode': u'0', 'reason': None, 'response': 'ok',
                          'status': requests.codes.ok}
         with mock.patch.object(self.rest_service, 'requestREST',

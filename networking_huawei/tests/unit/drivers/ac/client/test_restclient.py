@@ -20,8 +20,8 @@ from oslo_config import cfg
 from oslo_serialization import jsonutils
 from oslotest import base
 
-from networking_huawei.common import constants as ac_const
 import networking_huawei.drivers.ac.client.restclient as ac_rest
+from networking_huawei.drivers.ac.common import config  # noqa
 
 
 test_create_network_req = {'network':
@@ -62,11 +62,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         return response
 
     def test_rc_send_timeout(self):
-        operation = 'create_network'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'POST'
+        url = '/controller/dc/esdk/v2.0/test_url'
         expected_ret = {'errorCode': None, 'reason': None,
                         'response': None, 'status': -1}
         with mock.patch.object(self.restc, 'process_request',
@@ -76,11 +73,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
             self.assertEqual(expected_ret, ret, "Not expected return")
 
     def test_rc_send_success(self):
-        operation = 'create_network'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'POST'
+        url = '/controller/dc/esdk/v2.0/test_url'
         expected_resp = {'errorCode': u'0', 'reason': None,
                          'response': 'ok', 'status': 204}
         with mock.patch.object(self.restc,
@@ -94,11 +88,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
             self.assertEqual(expected_resp, ret, "Not expected response")
 
     def test_rc_send_del_network(self):
-        operation = 'delete_subnet'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'DELETE'
+        url = '/controller/dc/esdk/v2.0/test_url'
         expected_resp = {'errorCode': None, 'reason': None,
                          'response': None, 'status': 200}
         resp = self._mock_req_resp(requests.codes.ok)
@@ -112,11 +103,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
             self.assertEqual(expected_resp, ret, "Not expected response")
 
     def test_rc_send_del_network_resp_valid(self):
-        operation = 'delete_subnet'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
+        methodname = 'DELETE'
+        url = '/controller/dc/esdk/v2.0/test_url'
         expected_resp = {'errorCode': None, 'reason': None,
                          'response': None, 'status': 300}
         resp = self._mock_req_resp(requests.codes.multiple_choices)
@@ -129,13 +117,10 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
             self.assertEqual(expected_resp, ret, "Not expected response")
 
     def test_rc_process_request(self):
-        operation = 'delete_subnet'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+        methodname = 'DELETE'
+        url = '/controller/dc/esdk/v2.0/test_url'
         auth = (cfg.CONF.huawei_ac_config.username,
                 cfg.CONF.huawei_ac_config.password)
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
         headers = {'Accept': 'application/json',
                    'Content-type': 'application/json'}
         data = {"network": {"routerExternal": False,
@@ -172,13 +157,10 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
                     **kwargs)
 
     def test_rc_process_request_timeout_exception(self):
-        operation = 'delete_subnet'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+        methodname = 'DELETE'
+        url = '/controller/dc/esdk/v2.0/test_url'
         auth = (cfg.CONF.huawei_ac_config.username,
                 cfg.CONF.huawei_ac_config.password)
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
         headers = {'Accept': 'application/json',
                    'Content-type': 'application/json'}
         data = {"network": {"routerExternal": False,
@@ -215,13 +197,10 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
                                 **kwargs)
 
     def test_rc_process_request_exception(self):
-        operation = 'delete_subnet'
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+        methodname = 'DELETE'
+        url = '/controller/dc/esdk/v2.0/test_url'
         auth = (cfg.CONF.huawei_ac_config.username,
                 cfg.CONF.huawei_ac_config.password)
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES
-                          [operation]['rsrc'])
         headers = {'Accept': 'application/json',
                    'Content-type': 'application/json'}
         data = {"network": {"routerExternal": False,
