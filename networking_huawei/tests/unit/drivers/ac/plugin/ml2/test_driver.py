@@ -573,6 +573,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                          'Accept': 'application/json'},
                 timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
                 verify=False,
+                auth=(cfg.CONF.huawei_ac_config.username,
+                      cfg.CONF.huawei_ac_config.password),
                 **kwargs)
         else:
             mock_method.assert_any_call(
@@ -581,6 +583,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                          'Accept': 'application/json'},
                 timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
                 verify=False,
+                auth=(cfg.CONF.huawei_ac_config.username,
+                      cfg.CONF.huawei_ac_config.password),
                 **kwargs)
 
     def _test_response_sg(self, context, oper_type,
@@ -639,6 +643,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                      'Accept': 'application/json'},
             timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
             verify=False,
+            auth=(cfg.CONF.huawei_ac_config.username,
+                      cfg.CONF.huawei_ac_config.password),
             **kwargs)
 
     def test_create_network_postcommit(self):
