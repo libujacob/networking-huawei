@@ -57,25 +57,25 @@ NW_HW_NEUTRON_RESOURCES = {'create_network': {'rsrc': NW_HW_NETWORKS,
                            'create_security_group': {'rsrc': NW_HW_SEC_GRPS,
                                                      'method': 'POST',
                                                      'needSvcNameUpdate':
-                                                         False},
+                                                     False},
                            'delete_security_group': {'rsrc': NW_HW_SEC_GRPS,
                                                      'method': 'DELETE',
                                                      'needSvcNameUpdate':
-                                                         False},
+                                                     False},
                            'update_security_group': {'rsrc': NW_HW_SEC_GRPS,
                                                      'method': 'PUT',
                                                      'needSvcNameUpdate':
-                                                         False},
+                                                     False},
                            'create_security_group_rule': {'rsrc':
                                                           NW_HW_SEC_GRP_RULES,
                                                           'method': 'POST',
                                                           'needSvcNameUpdate':
-                                                              False},
+                                                          False},
                            'delete_security_group_rule': {'rsrc':
                                                           NW_HW_SEC_GRP_RULES,
                                                           'method': 'DELETE',
                                                           'needSvcNameUpdate':
-                                                              False},
+                                                          False},
                            'create_router': {'rsrc': NW_HW_ROUTERS,
                                              'method': 'POST',
                                              'needSvcNameUpdate': False},

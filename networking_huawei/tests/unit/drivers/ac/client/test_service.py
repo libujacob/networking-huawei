@@ -23,17 +23,17 @@ import networking_huawei.drivers.ac.client.restclient as ac_rest
 import networking_huawei.drivers.ac.client.service as ac_rest_service
 
 test_create_network_req = {'network':
-                               {'routerExternal': False,
-                                'networkType': 'local',
-                                'segmentationId': None,
-                                'adminStateUp': True,
-                                'tenant_id': 'test-tenant',
-                                'name': 'net1',
-                                'physicalNetwork': None,
-                                'serviceName': 'physnet1',
-                                'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
-                                'status': 'ACTIVE',
-                                'shared': False}
+                          {'routerExternal': False,
+                           'networkType': 'local',
+                           'segmentationId': None,
+                           'adminStateUp': True,
+                           'tenant_id': 'test-tenant',
+                           'name': 'net1',
+                           'physicalNetwork': None,
+                           'serviceName': 'physnet1',
+                           'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
+                           'status': 'ACTIVE',
+                           'shared': False}
                            }
 
 
@@ -56,7 +56,7 @@ class HuaweiACRestServiceTestCase(base.BaseTestCase):
         expected_resp = {'errorCode': u'0', 'reason': None,
                          'response': 'ok', 'status': 204}
         with mock.patch.object(self.ac_rest, 'send',
-                               return_value=expected_resp) as mock_method:
+                               return_value=expected_resp):
             self.rest_service.requestREST(methodname, url, hex(10),
                                           test_create_network_req)
 
@@ -87,7 +87,8 @@ class HuaweiACRestServiceTestCase(base.BaseTestCase):
         expected_resp = {'errorCode': u'0', 'reason': None, 'response': 'ok',
                          'status': requests.codes.ok}
         with mock.patch.object(self.rest_service, 'requestREST',
-                               return_value=expected_resp) as mock_method:
+                               return_value=expected_resp):
             ret = self.rest_service.requestService(methodname, url, hex(10),
-                                                   test_create_network_req, True)
+                                                   test_create_network_req,
+                                                   True)
             self.assertEqual(None, ret, "Not expected return")

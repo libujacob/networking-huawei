@@ -60,8 +60,8 @@ test_network_object_sent_ext = {'status': 'ACTIVE',
 test_network_object_sent_missing_tenant_id = {'status': 'ACTIVE',
                                               'subnets': [],
                                               'name': 'net1',
-                                              'provider:physical_network':
-                                                  None,
+                                              'provider:'
+                                              'physical_network': None,
                                               'admin_state_up': True,
                                               'provider:network_type': 'local',
                                               'router:external': False,
@@ -161,7 +161,8 @@ test_subnet_object_update = {'networkId': test_network_uuid,
                              'ipVersion': 4,
                              'enableDhcp': True,
                              'allocationPools':
-                                 [{'start': '10.0.0.2', 'end': '10.0.1.254'}],
+                             [{'start': '10.0.0.2',
+                               'end': '10.0.1.254'}],
                              'cidr': '10.0.0.0/23',
                              'gatewayIp': '10.0.0.1',
                              'dnsNameservers': [],
@@ -212,8 +213,7 @@ test_port_object_sent_bp = {'status': 'DOWN',
                             'mac_address': '12:34:56 :78:21:b6',
                             "fixed_ips": [
                                 {
-                                    "ip_address":
-                                        "10.0.0.2",
+                                    "ip_address": "10.0.0.2",
                                     "subnet_id": "a0304c3a-4f08-4c43-"
                                                  "88af-d796509c97d2",
                                 }
@@ -228,7 +228,7 @@ test_port_object_sent_sg = {'status': 'DOWN',
                             'fixed_ips': [],
                             'id': test_fake_port_uuid,
                             'security_groups':
-                                ['2f9244b4-9bee-4e81-bc4a-3f3c2045b3d7'],
+                            ['2f9244b4-9bee-4e81-bc4a-3f3c2045b3d7'],
                             'device_id': 'fake_device',
                             'name': 'default',
                             'admin_state_up': True,
@@ -289,7 +289,7 @@ test_port_object_receive_no_service = {"id": "72c56c48-e9b8-4dcf-b3a7-"
                                        "macAddress": "12:34:56 :78:21:b6",
                                        "tenant_id": "test-tenant",
                                        "profile":
-                                           {"localLinkInformations": []},
+                                       {"localLinkInformations": []},
                                        "name": "",
                                        "adminStateUp": True,
                                        "sercurityGroups": [],
@@ -382,8 +382,8 @@ test_sg_receive = {"tenant_id": "e4f50856753b4dc6afee5fa6b9b6c550",
                         "portRangeMin": None,
                         "id": "565b9502-12de-4ffd-91e9-68885cff6ae1",
                         "etherType": "IPv6",
-                        "securityGroupId":
-                            "2076db17-a522-4506-91de-c6dd8e837028",
+                        "securityGroupId": "2076db17-a522-4506-"
+                                           "91de-c6dd8e837028",
                         }]}
 
 test_sg = {"security_group":
@@ -488,7 +488,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         cfg.CONF.set_override('port', '2222', 'huawei_ac_config')
         cfg.CONF.set_override('username', 'huawei_user', 'huawei_ac_config')
         cfg.CONF.set_override('password', 'huawei_pwd', 'huawei_ac_config')
-        self.ml2_huawei_path = "http://" + cfg.CONF.huawei_ac_config.host + ":" + \
+        self.ml2_huawei_path = "http://" + cfg.CONF.huawei_ac_config.host \
+                               + ":" + \
                                str(cfg.CONF.huawei_ac_config.port)
 
     def _mock_req_resp(self, status_code):
@@ -905,8 +906,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                         return_value=resp) as mock_method:
             mock_method.side_effect = [requests.exceptions.Timeout(
                                        mock.Mock(msg="Timeout Exceptions")),
-                                       Exception(
-                                       mock.Mock(msg="Exception"))]
+                                       Exception(mock. Mock(msg="Exception"))]
             self.create_network_postcommit(context)
             self._test_response(context_receive, 'POST',
                                 'network', mock_method, True)

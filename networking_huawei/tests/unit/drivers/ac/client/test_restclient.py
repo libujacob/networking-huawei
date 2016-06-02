@@ -23,17 +23,17 @@ from oslotest import base
 import networking_huawei.drivers.ac.client.restclient as ac_rest
 
 test_create_network_req = {'network':
-                               {'routerExternal': False,
-                                'networkType': 'local',
-                                'segmentationId': None,
-                                'adminStateUp': True,
-                                'tenant_id': 'test-tenant',
-                                'name': 'net1',
-                                'physicalNetwork': None,
-                                'serviceName': 'physnet1',
-                                'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
-                                'status': 'ACTIVE',
-                                'shared': False}
+                          {'routerExternal': False,
+                           'networkType': 'local',
+                           'segmentationId': None,
+                           'adminStateUp': True,
+                           'tenant_id': 'test-tenant',
+                           'name': 'net1',
+                           'physicalNetwork': None,
+                           'serviceName': 'physnet1',
+                           'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
+                           'status': 'ACTIVE',
+                           'shared': False}
                            }
 
 
@@ -64,8 +64,7 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         expected_ret = {'errorCode': None, 'reason': None,
                         'response': None, 'status': -1}
         with mock.patch.object(self.restc, 'process_request',
-                               return_value="Timeout Exceptions") \
-                as mock_method:
+                               return_value="Timeout Exceptions"):
             ret = ac_rest.RestClient().send(self.host, self.port,
                                             methodname, url, hex(10), {})
             self.assertEqual(expected_ret, ret, "Not expected return")
@@ -81,9 +80,11 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         with mock.patch.object(self.restc,
                                'process_request',
                                return_value=self._mock_req_resp
-                                   (requests.codes.no_content)) as mock_method:
-            ret = ac_rest.RestClient().send(self.host, self.port, methodname, url,
-                                            hex(10), test_create_network_req)
+                               (requests.codes.no_content)):
+            ret = ac_rest.RestClient().send(self.host, self.port,
+                                            methodname, url,
+                                            hex(10),
+                                            test_create_network_req)
             self.assertEqual(expected_resp, ret, "Not expected response")
 
     def test_rc_send_del_network(self):
@@ -97,14 +98,12 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         resp = self._mock_req_resp(requests.codes.ok)
         resp.content = ""
         with mock.patch.object(self.restc, 'process_request',
-                               return_value = resp
-                               ) as mock_method:
+                               return_value=resp):
             ret = ac_rest.RestClient().send(self.host, self.port,
                                             methodname, url,
                                             hex(10),
                                             test_create_network_req)
             self.assertEqual(expected_resp, ret, "Not expected response")
-
 
     def test_rc_send_del_network_resp_valid(self):
         operation = 'delete_subnet'
@@ -116,14 +115,12 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
                          'response': None, 'status': 300}
         resp = self._mock_req_resp(requests.codes.multiple_choices)
         with mock.patch.object(self.restc, 'process_request',
-                               return_value=resp
-                               ) as mock_method:
+                               return_value=resp):
             ret = ac_rest.RestClient().send(self.host, self.port,
                                             methodname, url,
                                             hex(10),
                                             test_create_network_req)
             self.assertEqual(expected_resp, ret, "Not expected response")
-
 
     def test_rc_process_request(self):
         operation = 'delete_subnet'
@@ -148,18 +145,19 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         kwargs = {'url': url, 'data': data}
         with mock.patch('requests.request',
                         return_value=resp) as mock_method:
-            ac_rest.RestClient().process_request(methodname, url, headers, data)
-            mock_method.assert_called_once_with( methodname,
-                                            headers={'Content-type':
+            ac_rest.RestClient().process_request(methodname,
+                                                 url, headers,
+                                                 data)
+            mock_method.assert_called_once_with(methodname,
+                                                headers={'Content-type':
                                                          'application/json',
-                                            'Accept':
-                                                'application/json'},
-                                            timeout=\
-                                                 float(cfg.CONF.huawei_ac_config.\
-                                                       request_timeout),
-                                            verify=False,
-                                            **kwargs)
-
+                                                         'Accept':
+                                                         'application/json'},
+                                                timeout=float(cfg.CONF.
+                                                              huawei_ac_config.
+                                                              request_timeout),
+                                                verify=False,
+                                                **kwargs)
 
     def test_rc_process_request_timeout_exception(self):
         operation = 'delete_subnet'
@@ -186,14 +184,18 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
                         return_value=resp) as mock_method:
             mock_method.side_effect = requests.exceptions.\
                 Timeout(mock.Mock(msg="Timeout Exceptions"))
-            ac_rest.RestClient().process_request(methodname, url, headers, data)
+            ac_rest.RestClient().\
+                process_request(methodname, url, headers, data)
             mock_method.assert_any_call(methodname,
-                                        headers={'Content-type': 'application/json',
-                                                 'Accept': 'application/json'},
-                                        timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
+                                        headers={'Content-type':
+                                                 'application/json',
+                                                 'Accept':
+                                                 'application/json'},
+                                        timeout=float(cfg.CONF.
+                                                      huawei_ac_config.
+                                                      request_timeout),
                                         verify=False,
                                         **kwargs)
-
 
     def test_rc_process_request_exception(self):
         operation = 'delete_subnet'
@@ -218,17 +220,19 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         kwargs = {'url': url, 'data': data}
         with mock.patch('requests.request',
                         return_value=resp) as mock_method:
-            mock_method.side_effect = Exception\
-                (mock.Mock(msg="Timeout Exceptions"))
-            ac_rest.RestClient().process_request\
-                (methodname, url, headers, data)
+            mock_method.side_effect = Exception(mock.Mock(msg=
+                                                          "Timeout "
+                                                          "Exceptions"))
+            ac_rest.RestClient().process_request(methodname,
+                                                 url,
+                                                 headers, data)
             mock_method.assert_any_call(methodname,
                                         headers={'Content-type':
-                                                     'application/json',
+                                                 'application/json',
                                                  'Accept':
-                                                     'application/json'},
-                                        timeout=\
-                                        float(cfg.CONF.huawei_ac_config.
+                                                 'application/json'},
+                                        timeout=float(cfg.CONF.
+                                                      huawei_ac_config.
                                                       request_timeout),
                                         verify=False,
                                         **kwargs)

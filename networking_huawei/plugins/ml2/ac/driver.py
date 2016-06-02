@@ -378,16 +378,18 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         try:
             network_info = {'id': context.current['id'],
                             'status': context.current['status'],
-                            'segmentationId': context.current[
-                                'provider:segmentation_id'],
+                            'segmentationId': context.current['provider:'
+                                                              'segmentation'
+                                                              '_id'],
                             'tenant_id': context.current['tenant_id'],
                             'name': context.current['name'],
                             'adminStateUp': context.current['admin_state_up'],
                             'shared': context.current['shared'],
-                            'networkType':
-                                context.current['provider:network_type'],
-                            'physicalNetwork': context.current[
-                                'provider:physical_network']}
+                            'networkType': context.current['provider:'
+                                                           'network_type'],
+                            'physicalNetwork': context.current['provider:'
+                                                               'physical_'
+                                                               'network']}
         except KeyError as e:
             LOG.error(_LE("Key Error, doesn't contain all fields %s."), e)
             raise KeyError
@@ -443,12 +445,12 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                            'name': context.current['name'],
                            'ipVersion': context.current['ip_version'],
                            'enableDhcp': context.current['enable_dhcp'],
-                           'allocationPools':
-                               context.current['allocation_pools'],
+                           'allocationPools': context.current
+                           ['allocation_pools'],
                            'cidr': context.current['cidr'],
                            'gatewayIp': context.current['gateway_ip'],
-                           'dnsNameservers':
-                               context.current['dns_nameservers'],
+                           'dnsNameservers': context.current
+                           ['dns_nameservers'],
                            'hostRoutes': context.current['host_routes']}
 
             subnet_info_list = {}
