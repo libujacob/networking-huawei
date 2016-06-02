@@ -1090,7 +1090,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                 mock.Mock(msg="Timeout Exceptions")),
                 Exception(
                     mock.Mock(msg="Exception"))]
-            ac_rest.RestClient().process_request('get', "test/ac",
+            ac_rest.RestClient().process_request('get', ('admin', 'admin@123'),
+                                                 "test/ac",
                                                  "Content-Type: "
                                                  "application/json",
                                                  context)

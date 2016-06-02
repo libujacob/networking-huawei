@@ -126,6 +126,7 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
     def test_rc_process_request(self):
         operation = 'delete_subnet'
         methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+        auth = ('admin', 'admin@123')
         url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
                           ac_const.NW_HW_NEUTRON_RESOURCES
                           [operation]['rsrc'])
@@ -146,7 +147,7 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         kwargs = {'url': url, 'data': data}
         with mock.patch('requests.request',
                         return_value=resp) as mock_method:
-            ac_rest.RestClient().process_request(methodname,
+            ac_rest.RestClient().process_request(methodname, auth,
                                                  url, headers,
                                                  data)
             mock_method.assert_called_once_with(methodname,
@@ -163,6 +164,7 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
     def test_rc_process_request_timeout_exception(self):
         operation = 'delete_subnet'
         methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+        auth = ('admin', 'admin@123')
         url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
                           ac_const.NW_HW_NEUTRON_RESOURCES
                           [operation]['rsrc'])
@@ -186,7 +188,7 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
             mock_method.side_effect = requests.exceptions.\
                 Timeout(mock.Mock(msg="Timeout Exceptions"))
             ac_rest.RestClient().\
-                process_request(methodname, url, headers, data)
+                process_request(methodname, auth, url, headers, data)
             mock_method.assert_any_call(methodname,
                                         headers={'Content-type':
                                                  'application/json',
@@ -201,6 +203,7 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
     def test_rc_process_request_exception(self):
         operation = 'delete_subnet'
         methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+        auth = ('admin', 'admin@123')
         url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
                           ac_const.NW_HW_NEUTRON_RESOURCES
                           [operation]['rsrc'])
@@ -223,7 +226,7 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
                         return_value=resp) as mock_method:
             mock_method.side_effect = Exception(mock.Mock(msg="Timeout "
                                                               "Exceptions"))
-            ac_rest.RestClient().process_request(methodname,
+            ac_rest.RestClient().process_request(methodname, auth,
                                                  url,
                                                  headers, data)
             mock_method.assert_any_call(methodname,

@@ -53,7 +53,7 @@ class RestClient(object):
         LOG.debug('Send the request information, method: %s, url: %s, '
                   'headers: %s, data:%s', method, url, headers, params)
 
-        ret = self.process_request(method, url, headers, params)
+        ret = self.process_request(method, self.ac_auth, url, headers, params)
 
         if ("Timeout Exceptions" == ret) or ("Exceptions" == ret):
             LOG.error(_LE("Request to AC failed, ret: %s"), ret)
@@ -114,7 +114,7 @@ class RestClient(object):
 
         return result
 
-    def process_request(self, method, url, headers, data):
+    def process_request(self, method, auth, url, headers, data):
         timeout_retry = self.timeout_retry
         ret = None
         temp_ret = None
@@ -122,10 +122,11 @@ class RestClient(object):
             try:
                 if (method == 'get') or (method == 'GET'):
                     ret = requests.request(method, url=url, headers=headers,
+                                           auth=auth,
                                            verify=False, timeout=self.timeout)
                 else:
                     ret = requests.request(method, url=url, headers=headers,
-                                           data=data, verify=False,
+                                           data=data, auth=auth, verify=False,
                                            timeout=self.timeout)
                 break
 
