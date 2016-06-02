@@ -95,8 +95,8 @@ class HuaweiACL3RouterPlugin(l3_router_plugin.L3RouterPlugin):
                           'name': router_db['name'],
                           'adminStateUp': router_db['admin_state_up'],
                           'tenant_id': router_db['tenant_id'],
-                          'externalGatewayInfo':
-                              router_db['external_gateway_info'],
+                          'externalGatewayInfo': router_db['external_'
+                                                           'gateway_info'],
                           'distributed': router_db['distributed'],
                           'ha': router_db['ha'],
                           'routes': router_db['routes']}

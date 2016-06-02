@@ -45,17 +45,17 @@ fake_router_object = {'router': {'name': 'router_abc',
 
 fake_network_id = '7464aaf0-27ea-448a-97df-51732f9e0e27'
 fake_router_external_info = {'external_gateway_info':
-                             {'network_id': fake_network_id,
-                              'enable_snat': False}}
+                            {'network_id': fake_network_id,
+                                'enable_snat': False}}
 
 fake_floating_ip_id = '7464aaf0-27ea-448a-97df-51732f9e0e25'
 fake_floating_ip = {'floatingip':
-                    {'fixed_ip_address': '10.1.1.1',
-                     'id': fake_floating_ip_id,
-                     'router_id': fake_router_uuid,
-                     'port_id': None,
-                     'status': None,
-                     'tenant_id': fake_tenant_id}}
+                   {'fixed_ip_address': '10.1.1.1',
+                    'id': fake_floating_ip_id,
+                    'router_id': fake_router_uuid,
+                    'port_id': None,
+                    'status': None,
+                    'tenant_id': fake_tenant_id}}
 
 fake_port_id = '7db560e9-76d4-4bf9-9c28-43efa7afa45d'
 fake_subnet_id = 'dc2b8071-c24c-4a8e-b471-dbf3fbe55830'
@@ -94,8 +94,11 @@ fake_rest_headers = {"Content-type": "application/json",
 
 
 class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
-
     def setUp(self):
+        cfg.CONF.set_override('username', 'huawei_user', 'huawei_ac_config')
+        cfg.CONF.set_override('password', 'huawei_pwd', 'huawei_ac_config')
+        cfg.CONF.set_override('neutron_ip', '127.0.0.1', 'huawei_ac_config')
+        cfg.CONF.set_override('neutron_name', 'NS_1', 'huawei_ac_config')
         super(HuaweiACL3RouterPluginTest, self).setUp()
         self._setUpExtension(
             'neutron.extensions.l3.RouterPluginBase', None,
@@ -132,7 +135,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         self.instance.get_routers_count.return_value = 0
         url = test_base._get_path('routers', fmt=self.fmt)
         resp = self._test_send_msg(fake_router_object, 'post', url)
-        self.instance.create_router.\
+        self.instance.create_router. \
             assert_called_once_with(mock.ANY, router=fake_router_object)
         self._verify_resp(resp, exc.HTTPCreated.code,
                           'router', fake_router_uuid)
@@ -183,8 +186,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                      'name': fake_router_db['name'],
                      'adminStateUp': fake_router_db['admin_state_up'],
                      'tenant_id': fake_router_db['tenant_id'],
-                     'externalGatewayInfo':
-                         fake_router_db['external_gateway_info'],
+                     'externalGatewayInfo': fake_router_db
+                     ['external_gateway_info'],
                      'distributed': fake_router_db['distributed'],
                      'ha': fake_router_db['ha'],
                      'routes': fake_router_db['routes']}
@@ -272,7 +275,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         router_request = {'router': fake_router_external_info}
         url = test_base._get_path('routers', id=fake_router_uuid, fmt=self.fmt)
         resp = self._test_send_msg(router_request, 'put', url)
-        self.instance.update_router.\
+        self.instance.update_router. \
             assert_called_once_with(mock.ANY, fake_router_uuid,
                                     router=router_request)
         self._verify_resp(resp, exc.HTTPOk.code, 'router', fake_router_uuid)
@@ -298,7 +301,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                 acl3router.delete_router(context, fake_router_db['id'])
 
         tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
-                  + str(cfg.CONF.huawei_ac_config.port) + ac_const.NW_HW_URL + '/' + \
+                  + str(cfg.CONF.huawei_ac_config.port) + \
+                  ac_const.NW_HW_URL + '/' + \
                   ac_const.NW_HW_NEUTRON_RESOURCES['delete_router']['rsrc'] \
                   + '/' + fake_router_db['id']
         params = jsonutils.dumps({})
@@ -341,7 +345,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                   action='add_router_interface',
                                   fmt=self.fmt)
         resp = self._test_send_msg(fake_interface_add, 'put', url)
-        self.instance.add_router_interface.\
+        self.instance.add_router_interface. \
             assert_called_once_with(mock.ANY, fake_router_uuid,
                                     fake_interface_add)
         self._verify_resp(resp, exc.HTTPOk.code, None, fake_router_uuid)
@@ -440,7 +444,7 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
                                   action='remove_router_interface',
                                   fmt=self.fmt)
         resp = self._test_send_msg(fake_interface_remove, 'put', url)
-        self.instance.remove_router_interface.\
+        self.instance.remove_router_interface. \
             assert_called_once_with(mock.ANY, fake_router_uuid,
                                     fake_interface_remove)
         self._verify_resp(resp, exc.HTTPOk.code, None, fake_router_uuid)
@@ -477,7 +481,8 @@ class HuaweiACL3RouterPluginTest(test_neutron_extensions.ExtensionTestCase):
         tst_url = "http://" + cfg.CONF.huawei_ac_config.host + ":" \
                   + str(cfg.CONF.huawei_ac_config.port) \
                   + ac_const.NW_HW_URL + '/' \
-                  + ac_const.NW_HW_NEUTRON_RESOURCES['delete_router_interface']['rsrc'] \
+                  + ac_const.NW_HW_NEUTRON_RESOURCES['delete_router'
+                                                     '_interface']['rsrc'] \
                   + '/' + fake_router_db['id']
         params = jsonutils.dumps(router_in)
         mock_method.assert_called_once_with(ac_const.NW_HW_NEUTRON_RESOURCES
