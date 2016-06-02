@@ -28,8 +28,10 @@ from networking_huawei._i18n import get_available_languages
 from networking_huawei.common import exceptions as ml2_exc
 import networking_huawei.drivers.ac.client.restclient as ac_rest
 import networking_huawei.drivers.ac.client.service as ac_service
-import networking_huawei.plugins.ml2.ac.driver as huawei_ml2_driver
-from networking_huawei.plugins.ml2.ac.driver import HuaweiACMechanismDriver
+import networking_huawei.drivers.ac.plugins.ml2.driver as huawei_ml2_driver
+from networking_huawei.drivers.ac.plugins.ml2.driver import \
+    HuaweiACMechanismDriver
+
 
 test_network_uuid = 'd897e21a-dfd6-4331-a5dd-7524fa421c3e'
 

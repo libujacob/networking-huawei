@@ -18,23 +18,24 @@ import requests
 
 from oslo_config import cfg
 from oslotest import base
+
 from networking_huawei.common import constants as ac_const
 import networking_huawei.drivers.ac.client.restclient as ac_rest
 import networking_huawei.drivers.ac.client.service as ac_rest_service
 
+
 test_create_network_req = {'network':
-                          {'routerExternal': False,
-                           'networkType': 'local',
-                           'segmentationId': None,
-                           'adminStateUp': True,
-                           'tenant_id': 'test-tenant',
-                           'name': 'net1',
-                           'physicalNetwork': None,
-                           'serviceName': 'physnet1',
-                           'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
-                           'status': 'ACTIVE',
-                           'shared': False}
-                           }
+                           {'routerExternal': False,
+                            'networkType': 'local',
+                            'segmentationId': None,
+                            'adminStateUp': True,
+                            'tenant_id': 'test-tenant',
+                            'name': 'net1',
+                            'physicalNetwork': None,
+                            'serviceName': 'physnet1',
+                            'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
+                            'status': 'ACTIVE',
+                            'shared': False}}
 
 
 class HuaweiACRestServiceTestCase(base.BaseTestCase):

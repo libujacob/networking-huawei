@@ -16,25 +16,26 @@
 import mock
 import requests
 
-from networking_huawei.common import constants as ac_const
 from oslo_config import cfg
 from oslo_serialization import jsonutils
 from oslotest import base
+
+from networking_huawei.common import constants as ac_const
 import networking_huawei.drivers.ac.client.restclient as ac_rest
 
+
 test_create_network_req = {'network':
-                          {'routerExternal': False,
-                           'networkType': 'local',
-                           'segmentationId': None,
-                           'adminStateUp': True,
-                           'tenant_id': 'test-tenant',
-                           'name': 'net1',
-                           'physicalNetwork': None,
-                           'serviceName': 'physnet1',
-                           'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
-                           'status': 'ACTIVE',
-                           'shared': False}
-                           }
+                           {'routerExternal': False,
+                            'networkType': 'local',
+                            'segmentationId': None,
+                            'adminStateUp': True,
+                            'tenant_id': 'test-tenant',
+                            'name': 'net1',
+                            'physicalNetwork': None,
+                            'serviceName': 'physnet1',
+                            'id': 'd897e21a-dfd6-4331-a5dd-7524fa421c3e',
+                            'status': 'ACTIVE',
+                            'shared': False}}
 
 
 class HuaweiACRestClientTestCase(base.BaseTestCase):
@@ -220,9 +221,8 @@ class HuaweiACRestClientTestCase(base.BaseTestCase):
         kwargs = {'url': url, 'data': data}
         with mock.patch('requests.request',
                         return_value=resp) as mock_method:
-            mock_method.side_effect = Exception(mock.Mock(msg=
-                                                          "Timeout "
-                                                          "Exceptions"))
+            mock_method.side_effect = Exception(mock.Mock(msg="Timeout "
+                                                              "Exceptions"))
             ac_rest.RestClient().process_request(methodname,
                                                  url,
                                                  headers, data)

@@ -33,7 +33,8 @@ from neutron.tests.unit.extensions import base as test_neutron_extensions
 from networking_huawei.common import constants as ac_const
 from networking_huawei.common import exceptions as ml2_exc
 import networking_huawei.drivers.ac.client.restclient as ac_rest
-from networking_huawei.plugins.l3.ac.driver import HuaweiACL3RouterPlugin
+from networking_huawei.drivers.ac.plugins.l3.driver import \
+    HuaweiACL3RouterPlugin
 
 fake_tenant_id = '048aa98a3ec345dc8b14427c81e276cf'
 
@@ -45,17 +46,17 @@ fake_router_object = {'router': {'name': 'router_abc',
 
 fake_network_id = '7464aaf0-27ea-448a-97df-51732f9e0e27'
 fake_router_external_info = {'external_gateway_info':
-                            {'network_id': fake_network_id,
-                                'enable_snat': False}}
+                             {'network_id': fake_network_id,
+                              'enable_snat': False}}
 
 fake_floating_ip_id = '7464aaf0-27ea-448a-97df-51732f9e0e25'
 fake_floating_ip = {'floatingip':
-                   {'fixed_ip_address': '10.1.1.1',
-                    'id': fake_floating_ip_id,
-                    'router_id': fake_router_uuid,
-                    'port_id': None,
-                    'status': None,
-                    'tenant_id': fake_tenant_id}}
+                    {'fixed_ip_address': '10.1.1.1',
+                     'id': fake_floating_ip_id,
+                     'router_id': fake_router_uuid,
+                     'port_id': None,
+                     'status': None,
+                     'tenant_id': fake_tenant_id}}
 
 fake_port_id = '7db560e9-76d4-4bf9-9c28-43efa7afa45d'
 fake_subnet_id = 'dc2b8071-c24c-4a8e-b471-dbf3fbe55830'
