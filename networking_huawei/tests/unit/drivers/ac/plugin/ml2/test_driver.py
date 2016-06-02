@@ -644,7 +644,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             timeout=float(cfg.CONF.huawei_ac_config.request_timeout),
             verify=False,
             auth=(cfg.CONF.huawei_ac_config.username,
-                      cfg.CONF.huawei_ac_config.password),
+                  cfg.CONF.huawei_ac_config.password),
             **kwargs)
 
     def test_create_network_postcommit(self):
