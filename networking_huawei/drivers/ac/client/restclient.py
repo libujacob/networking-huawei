@@ -94,7 +94,7 @@ class RestClient(object):
                                                         resrc_id, body,
                                                         callback)
                 else:
-                    LOG.error(_LE('Max retry of request to AC reached.'))
+                    LOG.error(_LE('Max retry of request to AC has reached.'))
                     result['response'] = None
                     result['status'] = ret.status_code
                     result['errorCode'] = None
