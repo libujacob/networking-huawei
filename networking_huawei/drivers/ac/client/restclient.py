@@ -28,8 +28,8 @@ LOG = logging.getLogger(__name__)
 class RestClient(object):
     # Initialized and reads the configuration file base parameters
     def __init__(self):
-        self.ac_auth = (cfg.CONF.huawei_ac_config.username,
-                        cfg.CONF.huawei_ac_config.password)
+        self.auth = (cfg.CONF.huawei_ac_config.username,
+                     cfg.CONF.huawei_ac_config.password)
         self.timeout = float(cfg.CONF.huawei_ac_config.request_timeout)
         self.timeout_retry = int(cfg.CONF.huawei_ac_config.timeout_retry)
         self.retry_count = int(cfg.CONF.huawei_ac_config.token_retry)
@@ -43,8 +43,6 @@ class RestClient(object):
         if method.upper() == 'GET' or method.upper() == 'DELETE' \
                 or method.upper() == 'PUT':
             url = '%s%s%s' % (url, "/", resrc_id)
-        else:
-            pass
 
         params = jsonutils.dumps(body)
         headers = {"Content-type": "application/json",
@@ -53,7 +51,7 @@ class RestClient(object):
         LOG.debug('Send the request information, method: %s, url: %s, '
                   'headers: %s, data:%s', method, url, headers, params)
 
-        ret = self.process_request(method, self.ac_auth, url, headers, params)
+        ret = self.process_request(method, self.auth, url, headers, params)
 
         if ("Timeout Exceptions" == ret) or ("Exceptions" == ret):
             LOG.error(_LE("Request to AC failed, error: %s"), ret)
@@ -96,6 +94,7 @@ class RestClient(object):
                                                         resrc_id, body,
                                                         callback)
                 else:
+                    LOG.error(_LE('Max retry of request to AC reached.'))
                     result['response'] = None
                     result['status'] = ret.status_code
                     result['errorCode'] = None
@@ -152,7 +151,6 @@ class RestClient(object):
 
         if ("Timeout Exceptions" == ret) or ("Exceptions" == ret):
             LOG.error(_LE('Request to AC failed, error code: %s') % ret)
-            return ret
 
         return ret
 
