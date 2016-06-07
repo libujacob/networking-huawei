@@ -1042,12 +1042,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                                    return_value=None) as mock_rest_req:
                 mock_rest_req.side_effect = \
                     Exception(mock.Mock(msg="exceptions"))
-                with mock.patch('requests.request', return_value=resp) \
-                    as mock_method:
-                    self.secGroupSub.\
-                        create_security_group(None, None, None, **kwargs)
-                    self._test_response_sg(context_receive,
-                                   'DELETE', 'securityGroup', mock_method)
+                self.secGroupSub.\
+                    create_security_group(None, None, None, **kwargs)
 
     def test_create_security_group_rule(self):
         resp = self._mock_req_resp(requests.codes.all_good)
