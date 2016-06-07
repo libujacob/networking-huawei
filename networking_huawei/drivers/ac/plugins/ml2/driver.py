@@ -255,7 +255,8 @@ class HuaweiACSecurityGroupsHandler(object):
         if operation in ac_const.NW_HW_NEUTRON_RESOURCES:
             methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
             url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                              ac_const.NW_HW_NEUTRON_RESOURCES[operation]['rsrc'])
+                              ac_const.NW_HW_NEUTRON_RESOURCES[
+                                  operation]['rsrc'])
             service = RESTService()
 
             LOG.debug("The ac data is: %s.", jsonutils.dumps(entry_info))
