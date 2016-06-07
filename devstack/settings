@@ -12,5 +12,3 @@ Q_PLUGIN_EXTRA_CONF_PATH=$NEUTRON_CONF_DIR
 Q_PLUGIN_EXTRA_CONF_FILES=(huawei_driver_config.ini)
 # Enable the VLAN sevices
 ENABLE_TENANT_VLANS=True
-# Enable the huawe-ac service for plugin support
-enable_service huawei-ac
