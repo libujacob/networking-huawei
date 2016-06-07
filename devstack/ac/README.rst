@@ -1,6 +1,6 @@
-=====================
- Enabling in DevStack
-=====================
+=============================
+ Enabling support in DevStack
+=============================
 
 This directory contains the devstack support files for networking-huawei
 plugin. To configure the networking huawei, you have to enable the
