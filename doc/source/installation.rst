@@ -33,7 +33,7 @@ from the Neutron Server.
 
           [[local|localrc]]
           disable_service n-net
-          enable_service neutron q-svc q-agt q-dhcp q-l3 q-meta
+          enable_service neutron q-svc q-dhcp q-l3 q-meta
           enable_plugin networking-huawei https://github.com/openstack/networking-huawei.git master
 
      5. Update the configuration for AC in *local.conf/localrc* file under
