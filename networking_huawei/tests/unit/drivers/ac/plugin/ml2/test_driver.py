@@ -936,7 +936,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         resp = self._mock_req_resp(requests.codes.all_good)
         kwargs = test_sg_create
         with mock.patch('requests.request', return_value=resp) as mock_method:
-            with mock.patch.object(self.securityGroupDb.SecurityGroupDbManager,
+            with mock.patch.object(self.securityGroupDb,
                                    'get_security_group',
                                    return_value=security_group):
                 self.secGroupSub.create_security_group(
@@ -950,7 +950,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         resp = self._mock_req_resp(requests.codes.all_good)
         kwargs = test_sg_create_def
         with mock.patch('requests.request', return_value=resp) as mock_method:
-            with mock.patch.object(self.securityGroupDb.SecurityGroupDbManager,
+            with mock.patch.object(self.securityGroupDb,
                                    'get_security_group',
                                    return_value=security_group):
                 self.secGroupSub.create_security_group(
@@ -965,7 +965,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                                'rest_request',
                                return_value=resp) as mock_method:
             mock_method.side_effect = Exception(mock.Mock(msg="exceptions"))
-            with mock.patch.object(self.securityGroupDb.SecurityGroupDbManager,
+            with mock.patch.object(self.securityGroupDb,
                                    'get_security_group',
                                    return_value=security_group):
                 self.secGroupSub.\
@@ -987,7 +987,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         kwargs = test_sg_create
         with mock.patch.object(self.secGroupSub, 'rest_request',
                                return_value=resp) as mock_method:
-            with mock.patch.object(self.securityGroupDb.SecurityGroupDbManager,
+            with mock.patch.object(self.securityGroupDb,
                                    'get_security_group',
                                    return_value=security_group) \
                     as mock_method:
@@ -1034,7 +1034,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         resp = self._mock_req_resp(requests.codes.all_good)
         context_receive = mock.Mock(current=test_delete_sg_receive)
         kwargs = test_sg_create
-        with mock.patch.object(self.securityGroupDb.SecurityGroupDbManager,
+        with mock.patch.object(self.securityGroupDb,
                                'get_security_group',
                                return_value=security_group):
             with mock.patch.object(self.secGroupSub,
@@ -1138,7 +1138,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
     def test_default_security_group_rest_callback(self):
         try:
             kwargs = test_sg_create
-            with mock.patch.object(self.securityGroupDb.SecurityGroupDbManager,
+            with mock.patch.object(self.securityGroupDb,
                                    'get_security_group',
                                    return_value=security_group):
                 resp = self._mock_req_resp(requests.codes.all_good)
