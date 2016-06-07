@@ -41,279 +41,294 @@ from networking_huawei.drivers.ac.common import config  # noqa
 LOG = logging.getLogger(__name__)
 
 
-@log_helpers.log_method_call
-def create_security_group(resource, event, trigger, **kwargs):
-    """Subscribed for security group creation
+class HuaweiACSecurityGroupsHandler(object):
 
-    :param resource: Security group resources
-    :param event: Event
-    :param trigger: Trigger for the call
-    :param kwargs: Args
-    :return: None
-    """
+    def __init__(self):
+        self._subscribe()
 
-    security_group = kwargs['security_group']
-    ctx = context.get_admin_context()
-    try:
-        securitygroupdb = SecurityGroupDbManager()
-        sg_group = securitygroupdb \
-            .get_security_group(ctx, security_group['id'])
-        security_group['security_group_rules'] = \
-            sg_group['security_group_rules']
-    except Exception:
-        LOG.warning(_LW("The SG group does not exist."))
+    @log_helpers.log_method_call
+    def create_security_group(self, resource, event, trigger, **kwargs):
+        """Subscribed for security group creation
 
-    security_group_info = _set_security_group(security_group)
-    LOG.debug("The security group_info is %s.",
-              security_group_info)
-    try:
-        rest_request(security_group_info['id'],
-                     {'securityGroup': security_group_info},
-                     'create_security_group')
-    except Exception:
-        create_security_group_rollback(security_group_info['id'])
-    LOG.debug("Finish creating security group.")
+        :param resource: Security group resources
+        :param event: Event
+        :param trigger: Trigger for the call
+        :param kwargs: Args
+        :return: None
+        """
 
-
-@log_helpers.log_method_call
-def create_security_group_rollback(group_id):
-    """Rollback the security group subscription
-
-    :param group_id: Group id of the security group
-    :return: None
-    """
-
-    try:
-        rest_request(group_id, {}, 'delete_security_group')
-    except Exception:
-        LOG.error(_LE("Rollback for create security group failed."))
-
-
-@log_helpers.log_method_call
-def update_security_group(resource, event, trigger, **kwargs):
-    """Subscribed for security group update
-
-    :param resource: Security group resources
-    :param event: Event
-    :param trigger: Trigger for the call
-    :param kwargs: Args
-    :return: None
-    """
-
-    security_group = kwargs['security_group']
-    security_group_info = _set_security_group(security_group)
-    LOG.debug("The group is %s.", security_group_info)
-    try:
-        rest_request(security_group_info['id'],
-                     {'securityGroup': security_group_info},
-                     'update_security_group')
-    except Exception:
-        LOG.error(_LE("Update security group failed."))
-
-    LOG.debug("End update security group.")
-
-
-@log_helpers.log_method_call
-def delete_security_group(resource, event, trigger, **kwargs):
-    """Subscribed for security group delete
-
-    :param resource: Security group resources
-    :param event: Event
-    :param trigger: Trigger for the call
-    :param kwargs: Args
-    :return: None
-    """
-
-    group_id = kwargs['security_group_id']
-    LOG.debug("The group id is %s.", group_id)
-    try:
-        rest_request(group_id, {}, 'delete_security_group')
-    except Exception:
-        LOG.error(_LE("Delete security group fail."))
-
-    LOG.debug("End delete security group.")
-
-
-@log_helpers.log_method_call
-def create_security_group_rule(resource, event, trigger, **kwargs):
-    """Subscribed for security group rule creation
-
-    :param resource: Security group resources
-    :param event: Event
-    :param trigger: Trigger for the call
-    :param kwargs: Args
-    :return: None
-    """
-
-    rule = kwargs['security_group_rule']
-    rule_info = _set_security_group_rule(rule)
-    LOG.debug("The group rule is %s.", rule_info)
-    try:
-        rest_request(
-            rule_info['id'],
-            {'securityGroupRule': rule_info},
-            'create_security_group_rule')
-    except Exception:
-        LOG.error(_LE("Create \
-            security group rule failed, rollback.")),
-        create_security_group_rule_rollback(rule_info['id'])
-
-    LOG.debug("End create security group rule.")
-
-
-@log_helpers.log_method_call
-def create_security_group_rule_rollback(rule_id):
-    """Rollback the security group rule subscription
-
-    :param group_id: Group id of the security group
-    :return: None
-    """
-
-    try:
-        rest_request(rule_id, {}, 'delete_security_group_rule')
-    except Exception:
-        LOG.error(_LE("Rollback group rule failed."))
-
-
-@log_helpers.log_method_call
-def delete_security_group_rule(resource, event, trigger, **kwargs):
-    """Subscribed for security group rule delete
-
-    :param resource: Security group resources
-    :param event: Event
-    :param trigger: Trigger for the call
-    :param kwargs: Args
-    :return: None
-    """
-
-    rule_id = kwargs['security_group_rule_id']
-    try:
-        rest_request(rule_id, {}, 'delete_security_group_rule')
-    except Exception:
-        LOG.error(_LE("Delete security group rule failed."))
-    LOG.debug("End delete security group rule.")
-
-
-@log_helpers.log_method_call
-def delete_snat(resource, event, trigger, **kwargs):
-    """Subscribed for source NAT deletion
-
-    :param resource: Security group resources
-    :param event: Event
-    :param trigger: Trigger for the call
-    :param kwargs: Args
-    :return: None
-    """
-
-    router_id = kwargs['router_id']
-    try:
-        rest_request(router_id, {}, 'delete_snat')
-    except Exception:
-        LOG.error(_LE("Delete SNAT failed."))
-    LOG.debug("End delete SNAT.")
-
-
-def _set_security_group(security_group):
-    security_group_info = {}
-    security_group_info['tenant_id'] = security_group['tenant_id']
-    security_group_info['name'] = security_group['name']
-    security_group_info['description'] = security_group['description']
-    security_group_info['id'] = security_group['id']
-    rule_arr = []
-    for security_group_rule in security_group['security_group_rules']:
-        rule_info = {'tenant_id': security_group_rule['tenant_id'],
-                     'remoteGroupId': security_group_rule['remote_group_id'],
-                     'direction': security_group_rule['direction'],
-                     'remoteIpPrefix': security_group_rule['remote_ip_prefix'],
-                     'protocol': security_group_rule['protocol'],
-                     'portRangeMax': security_group_rule['port_range_max'],
-                     'portRangeMin': security_group_rule['port_range_min'],
-                     'id': security_group_rule['id'],
-                     'etherType': security_group_rule['ethertype'],
-                     'securityGroupId': security_group_rule[
-                         'security_group_id']}
-        rule_arr.append(rule_info)
-
-    security_group_info['securityGroupRuleList'] = rule_arr
-    return security_group_info
-
-
-def _set_security_group_rule(rule):
-    rule_info = {'remoteGroupId': rule['remote_group_id'],
-                 'direction': rule['direction'],
-                 'remoteIpPrefix': rule['remote_ip_prefix'],
-                 'protocol': rule['protocol'],
-                 'etherType': rule['ethertype'],
-                 'tenant_id': rule['tenant_id'],
-                 'portRangeMax': rule['port_range_max'],
-                 'portRangeMin': rule['port_range_min'],
-                 'id': rule['id'],
-                 'securityGroupId': rule['security_group_id']}
-    return rule_info
-
-
-@log_helpers.log_method_call
-def rest_request(id, entry_info, operation):
-
-    if operation in ac_const.NW_HW_NEUTRON_RESOURCES:
-        methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
-        url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
-                          ac_const.NW_HW_NEUTRON_RESOURCES[operation]['rsrc'])
-        service = RESTService()
-
-        LOG.debug("The ac data is: %s.", jsonutils.dumps(entry_info))
+        security_group = kwargs['security_group']
+        ctx = context.get_admin_context()
         try:
-            if operation == 'create_security_group' \
-                    and entry_info['securityGroup']['name'] == 'default':
-                service.requestService(methodname,
-                                       url,
-                                       id,
-                                       entry_info,
-                                       False,
-                                       default_security_group_rest_callback)
-            else:
-                service.requestService(methodname,
-                                       url,
-                                       id,
-                                       entry_info,
-                                       False,
-                                       rest_callback)
-        except Exception as e:
-            LOG.error(_LE("Exception is %s."), e)
-    else:
-        LOG.debug("The operation is wrong.")
-        raise ml2_exc.MechanismDriverError(
-            driver=ac_const.NW_HW_AC_DRIVER_NAME,
-            method='rest_request')
+            securitygroupdb = SecurityGroupDbManager()
+            sg_group = securitygroupdb \
+                .get_security_group(ctx, security_group['id'])
+            security_group['security_group_rules'] = \
+                sg_group['security_group_rules']
+        except Exception:
+            LOG.warning(_LW("The SG group does not exist."))
 
+        security_group_info = self._set_security_group(security_group)
+        LOG.debug("The security group_info is %s.",
+                  security_group_info)
+        try:
+            self._rest_request(security_group_info['id'],
+                         {'securityGroup': security_group_info},
+                         'create_security_group')
+        except Exception:
+            self._create_security_group_rollback(security_group_info['id'])
+        LOG.debug("Finish creating security group.")
 
-@log_helpers.log_method_call
-def rest_callback(errorcode, reason, status, data=None):
-    if status == req_code.ok and reason is None:
-        if errorcode != '0':
-            LOG.error(_LE("Raise MechanismDriverError."))
+    @log_helpers.log_method_call
+    def _create_security_group_rollback(self, group_id):
+        """Rollback the security group subscription
+
+        :param group_id: Group id of the security group
+        :return: None
+        """
+
+        try:
+            self._rest_request(group_id, {}, 'delete_security_group')
+        except Exception:
+            LOG.error(_LE("Rollback for create security group failed."))
+
+    @log_helpers.log_method_call
+    def update_security_group(self, resource, event, trigger, **kwargs):
+        """Subscribed for security group update
+
+        :param resource: Security group resources
+        :param event: Event
+        :param trigger: Trigger for the call
+        :param kwargs: Args
+        :return: None
+        """
+
+        security_group = kwargs['security_group']
+        security_group_info = self._set_security_group(security_group)
+        LOG.debug("The group is %s.", security_group_info)
+        try:
+            self._rest_request(security_group_info['id'],
+                         {'securityGroup': security_group_info},
+                         'update_security_group')
+        except Exception:
+            LOG.error(_LE("Update security group failed."))
+
+        LOG.debug("End update security group.")
+
+    @log_helpers.log_method_call
+    def delete_security_group(self, resource, event, trigger, **kwargs):
+        """Subscribed for security group delete
+
+        :param resource: Security group resources
+        :param event: Event
+        :param trigger: Trigger for the call
+        :param kwargs: Args
+        :return: None
+        """
+
+        group_id = kwargs['security_group_id']
+        LOG.debug("The group id is %s.", group_id)
+        try:
+            self._rest_request(group_id, {}, 'delete_security_group')
+        except Exception:
+            LOG.error(_LE("Delete security group fail."))
+
+        LOG.debug("End delete security group.")
+
+    @log_helpers.log_method_call
+    def create_security_group_rule(self, resource, event, trigger, **kwargs):
+        """Subscribed for security group rule creation
+
+        :param resource: Security group resources
+        :param event: Event
+        :param trigger: Trigger for the call
+        :param kwargs: Args
+        :return: None
+        """
+
+        rule = kwargs['security_group_rule']
+        rule_info = self._set_security_group_rule(rule)
+        LOG.debug("The group rule is %s.", rule_info)
+        try:
+            self._rest_request(
+                rule_info['id'],
+                {'securityGroupRule': rule_info},
+                'create_security_group_rule')
+        except Exception:
+            LOG.error(_LE("Create \
+                security group rule failed, rollback.")),
+            self._create_security_group_rule_rollback(rule_info['id'])
+
+        LOG.debug("End create security group rule.")
+
+    @log_helpers.log_method_call
+    def _create_security_group_rule_rollback(self, rule_id):
+        """Rollback the security group rule subscription
+
+        :param group_id: Group id of the security group
+        :return: None
+        """
+
+        try:
+            self._rest_request(rule_id, {}, 'delete_security_group_rule')
+        except Exception:
+            LOG.error(_LE("Rollback group rule failed."))
+
+    @log_helpers.log_method_call
+    def delete_security_group_rule(self, resource, event, trigger, **kwargs):
+        """Subscribed for security group rule delete
+
+        :param resource: Security group resources
+        :param event: Event
+        :param trigger: Trigger for the call
+        :param kwargs: Args
+        :return: None
+        """
+
+        rule_id = kwargs['security_group_rule_id']
+        try:
+            self._rest_request(rule_id, {}, 'delete_security_group_rule')
+        except Exception:
+            LOG.error(_LE("Delete security group rule failed."))
+        LOG.debug("End delete security group rule.")
+
+    @log_helpers.log_method_call
+    def delete_snat(self, resource, event, trigger, **kwargs):
+        """Subscribed for source NAT deletion
+
+        :param resource: Security group resources
+        :param event: Event
+        :param trigger: Trigger for the call
+        :param kwargs: Args
+        :return: None
+        """
+
+        router_id = kwargs['router_id']
+        try:
+            self._rest_request(router_id, {}, 'delete_snat')
+        except Exception:
+            LOG.error(_LE("Delete SNAT failed."))
+        LOG.debug("End delete SNAT.")
+
+    def _set_security_group(self, security_group):
+        security_group_info = {}
+        security_group_info['tenant_id'] = security_group['tenant_id']
+        security_group_info['name'] = security_group['name']
+        security_group_info['description'] = security_group['description']
+        security_group_info['id'] = security_group['id']
+        rule_arr = []
+        for security_group_rule in security_group['security_group_rules']:
+            rule_info = {'tenant_id': security_group_rule['tenant_id'],
+                         'remoteGroupId': security_group_rule['remote_group_id'],
+                         'direction': security_group_rule['direction'],
+                         'remoteIpPrefix': security_group_rule['remote_ip_prefix'],
+                         'protocol': security_group_rule['protocol'],
+                         'portRangeMax': security_group_rule['port_range_max'],
+                         'portRangeMin': security_group_rule['port_range_min'],
+                         'id': security_group_rule['id'],
+                         'etherType': security_group_rule['ethertype'],
+                         'securityGroupId': security_group_rule[
+                             'security_group_id']}
+            rule_arr.append(rule_info)
+
+        security_group_info['securityGroupRuleList'] = rule_arr
+        return security_group_info
+
+    def _set_security_group_rule(self, rule):
+        rule_info = {'remoteGroupId': rule['remote_group_id'],
+                     'direction': rule['direction'],
+                     'remoteIpPrefix': rule['remote_ip_prefix'],
+                     'protocol': rule['protocol'],
+                     'etherType': rule['ethertype'],
+                     'tenant_id': rule['tenant_id'],
+                     'portRangeMax': rule['port_range_max'],
+                     'portRangeMin': rule['port_range_min'],
+                     'id': rule['id'],
+                     'securityGroupId': rule['security_group_id']}
+        return rule_info
+
+    @log_helpers.log_method_call
+    def _rest_request(self, id, entry_info, operation):
+
+        if operation in ac_const.NW_HW_NEUTRON_RESOURCES:
+            methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
+            url = '%s%s%s' % (ac_const.NW_HW_URL, '/',
+                              ac_const.NW_HW_NEUTRON_RESOURCES[operation]['rsrc'])
+            service = RESTService()
+
+            LOG.debug("The ac data is: %s.", jsonutils.dumps(entry_info))
+            try:
+                if operation == 'create_security_group' \
+                        and entry_info['securityGroup']['name'] == 'default':
+                    service.requestService(
+                        methodname,
+                        url,
+                        id,
+                        entry_info,
+                        False,
+                        self._default_security_group_rest_callback)
+                else:
+                    service.requestService(methodname,
+                                           url,
+                                           id,
+                                           entry_info,
+                                           False,
+                                           self._rest_callback)
+            except Exception as e:
+                LOG.error(_LE("Exception is %s."), e)
+        else:
+            LOG.debug("The operation is wrong.")
             raise ml2_exc.MechanismDriverError(
                 driver=ac_const.NW_HW_AC_DRIVER_NAME,
-                method='rest_callback')
-    elif status == req_code.no_content:
-        pass
-    else:
-        LOG.error(_LE("Raise MechanismDriverError."))
+                method='_rest_request')
 
-
-@log_helpers.log_method_call
-def default_security_group_rest_callback(
-        errorcode, reason, status, data=None):
-    if status == req_code.ok and reason is None:
-        if errorcode != '0':
+    @log_helpers.log_method_call
+    def _rest_callback(self, errorcode, reason, status, data=None):
+        if status == req_code.ok and reason is None:
+            if errorcode != '0':
+                LOG.error(_LE("Raise MechanismDriverError."))
+                raise ml2_exc.MechanismDriverError(
+                    driver=ac_const.NW_HW_AC_DRIVER_NAME,
+                    method='_rest_callback')
+        elif status == req_code.no_content:
+            pass
+        else:
             LOG.error(_LE("Raise MechanismDriverError."))
-            raise ml2_exc.MechanismDriverError(
-                driver=ac_const.NW_HW_AC_DRIVER_NAME,
-                method="default_security_group_rest_callback")
-    elif status == req_code.no_content:
-        pass
-    else:
-        LOG.error(_LE("Default security group processing error."))
+
+    @log_helpers.log_method_call
+    def _default_security_group_rest_callback(
+            self, errorcode, reason, status, data=None):
+        if status == req_code.ok and reason is None:
+            if errorcode != '0':
+                LOG.error(_LE("Raise MechanismDriverError."))
+                raise ml2_exc.MechanismDriverError(
+                    driver=ac_const.NW_HW_AC_DRIVER_NAME,
+                    method="_default_security_group_rest_callback")
+        elif status == req_code.no_content:
+            pass
+        else:
+            LOG.error(_LE("Default security group processing error."))
+
+    def _subscribe(self):
+        LOG.debug("Security group subscription started.")
+        registry.subscribe(
+            self.delete_snat, resources.ROUTER_GATEWAY, events.BEFORE_DELETE)
+        registry.subscribe(
+            self.create_security_group, resources.SECURITY_GROUP,
+            events.AFTER_CREATE)
+        registry.subscribe(
+            self.update_security_group, resources.SECURITY_GROUP,
+            events.AFTER_UPDATE)
+        registry.subscribe(
+            self.delete_security_group, resources.SECURITY_GROUP,
+            events.AFTER_DELETE)
+        registry.subscribe(
+            self.create_security_group_rule, resources.SECURITY_GROUP_RULE,
+            events.AFTER_CREATE)
+        registry.subscribe(
+            self.delete_security_group_rule, resources.SECURITY_GROUP_RULE,
+            events.AFTER_DELETE)
+        LOG.debug("Security group subscription completed successfully.")
 
 
 class SecurityGroupDbManager(
@@ -326,23 +341,7 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
         LOG.info(_LI("Init huawei ml2 driver."))
         self.ctx = context.get_admin_context()
         self.securityGroupDb = SecurityGroupDbManager()
-        registry.subscribe(
-            delete_snat, resources.ROUTER_GATEWAY, events.BEFORE_DELETE)
-        registry.subscribe(
-            create_security_group, resources.SECURITY_GROUP,
-            events.AFTER_CREATE)
-        registry.subscribe(
-            update_security_group, resources.SECURITY_GROUP,
-            events.AFTER_UPDATE)
-        registry.subscribe(
-            delete_security_group, resources.SECURITY_GROUP,
-            events.AFTER_DELETE)
-        registry.subscribe(
-            create_security_group_rule, resources.SECURITY_GROUP_RULE,
-            events.AFTER_CREATE)
-        registry.subscribe(
-            delete_security_group_rule, resources.SECURITY_GROUP_RULE,
-            events.AFTER_DELETE)
+        self.secGroupSub = HuaweiACSecurityGroupsHandler()
         LOG.info(_LI("Initialization finished successfully for "
                      "huawei ml2 driver."))
 
