@@ -3,7 +3,6 @@
 
 # configure_ac_driver() - Copy the config file to the neutron path
 function configure_ac_driver {
-    echo $NW_HUAWEI_AC_CONF_FILE
     cp $DIR_HUAWEI/etc/huawei_driver_config.ini.sample $NW_HUAWEI_AC_CONF_FILE
 }
 
