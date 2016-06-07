@@ -979,8 +979,8 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
                           None,
                           'invalid_operation')
         self.secGroupSub.rest_request(None,
-                                       {'securityGroup1': None},
-                                       'create_security_group')
+                                      {'securityGroup1': None},
+                                      'create_security_group')
 
     def test_create_security_group_exception_sg(self):
         resp = self._mock_req_resp(requests.codes.all_good)
@@ -1031,8 +1031,6 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
             self.secGroupSub.delete_security_group(None, None, None, **kwargs)
 
     def test_create_security_group_rollback(self):
-        resp = self._mock_req_resp(requests.codes.all_good)
-        context_receive = mock.Mock(current=test_delete_sg_receive)
         kwargs = test_sg_create
         with mock.patch.object(self.securityGroupDb,
                                'get_security_group',
@@ -1051,7 +1049,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         context_receive = mock.Mock(current=test_sg_rule_receive)
         with mock.patch('requests.request', return_value=resp) as mock_method:
             self.secGroupSub.create_security_group_rule(None, None,
-                                                         None, **kwargs)
+                                                        None, **kwargs)
             self._test_response_sg(context_receive, 'POST',
                                    'security-group-rule', mock_method)
 
@@ -1089,7 +1087,7 @@ class HuaweiACMechanismDriverTestCase(base.BaseTestCase,
         context_receive = mock.Mock(current=test_delete_snat_receive)
         with mock.patch('requests.request', return_value=resp) as mock_method:
             self.secGroupSub.delete_snat(None, None,
-                                          None, **kwargs)
+                                         None, **kwargs)
             self._test_response_sg(context_receive,
                                    'DELETE', 'snat', mock_method)
 

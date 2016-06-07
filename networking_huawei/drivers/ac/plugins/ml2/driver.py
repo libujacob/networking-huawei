@@ -73,8 +73,8 @@ class HuaweiACSecurityGroupsHandler(object):
                   security_group_info)
         try:
             self.rest_request(security_group_info['id'],
-                         {'securityGroup': security_group_info},
-                         'create_security_group')
+                              {'securityGroup': security_group_info},
+                              'create_security_group')
         except Exception:
             self._create_security_group_rollback(security_group_info['id'])
         LOG.debug("Finish creating security group.")
@@ -108,8 +108,8 @@ class HuaweiACSecurityGroupsHandler(object):
         LOG.debug("The group is %s.", security_group_info)
         try:
             self.rest_request(security_group_info['id'],
-                         {'securityGroup': security_group_info},
-                         'update_security_group')
+                              {'securityGroup': security_group_info},
+                              'update_security_group')
         except Exception:
             LOG.error(_LE("Update security group failed."))
 
@@ -219,9 +219,11 @@ class HuaweiACSecurityGroupsHandler(object):
         rule_arr = []
         for security_group_rule in security_group['security_group_rules']:
             rule_info = {'tenant_id': security_group_rule['tenant_id'],
-                         'remoteGroupId': security_group_rule['remote_group_id'],
+                         'remoteGroupId': security_group_rule[
+                             'remote_group_id'],
                          'direction': security_group_rule['direction'],
-                         'remoteIpPrefix': security_group_rule['remote_ip_prefix'],
+                         'remoteIpPrefix': security_group_rule[
+                             'remote_ip_prefix'],
                          'protocol': security_group_rule['protocol'],
                          'portRangeMax': security_group_rule['port_range_max'],
                          'portRangeMin': security_group_rule['port_range_min'],
@@ -526,8 +528,9 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                     LOG.info(_LI("security_group_info is %s"),
                              security_group_info)
                     self.secGroupSub.rest_request(security_group_info['id'],
-                                     {'securityGroup': security_group_info},
-                                     'create_security_group')
+                                                  {'securityGroup':
+                                                      security_group_info},
+                                                  'create_security_group')
         LOG.debug("The port_info is %s.", port_info)
         self.__restRequest__(port_info['port']['id'], port_info, operation)
 
