@@ -28,7 +28,7 @@ General
 Features
 --------
 
-* Network, Subnet and Port creation, update and deletion.
-* Security group and rules handling.
-* L3 router support.
+* Support CRUD operations for ML2 resources like port, subnet and network.
+* Support Security group functionality.
+* Support router functionality.
 

@@ -282,7 +282,9 @@ def rest_request(id, entry_info, operation):
             LOG.error(_LE("Exception is %s."), e)
     else:
         LOG.debug("The operation is wrong.")
-        raise ml2_exc.MechanismDriverError(method='rest_request')
+        raise ml2_exc.MechanismDriverError(
+            driver=ac_const.NW_HW_AC_DRIVER_NAME,
+            method='rest_request')
 
 
 @log_helpers.log_method_call
@@ -290,7 +292,9 @@ def rest_callback(errorcode, reason, status, data=None):
     if status == req_code.ok and reason is None:
         if errorcode != '0':
             LOG.error(_LE("Raise MechanismDriverError."))
-            raise ml2_exc.MechanismDriverError(method='rest_callback')
+            raise ml2_exc.MechanismDriverError(
+                driver=ac_const.NW_HW_AC_DRIVER_NAME,
+                method='rest_callback')
     elif status == req_code.no_content:
         pass
     else:
@@ -303,8 +307,9 @@ def default_security_group_rest_callback(
     if status == req_code.ok and reason is None:
         if errorcode != '0':
             LOG.error(_LE("Raise MechanismDriverError."))
-            raise ml2_exc.MechanismDriverError(method="default_security_"
-                                                      "group_rest_callback")
+            raise ml2_exc.MechanismDriverError(
+                driver=ac_const.NW_HW_AC_DRIVER_NAME,
+                method="default_security_group_rest_callback")
     elif status == req_code.no_content:
         pass
     else:
@@ -620,16 +625,22 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                                    self.__callBack__)
         else:
             LOG.error(_LE("The operation is wrong."))
-            raise ml2_exc.MechanismDriverError(method='__restRequest__')
+            raise ml2_exc.MechanismDriverError(
+                driver=ac_const.NW_HW_AC_DRIVER_NAME,
+                method='__restRequest__')
 
     @log_helpers.log_method_call
     def __callBack__(self, errorCode, reason, status):
         if status == req_code.ok and reason is None:
             if errorCode != '0':
                 LOG.debug("Error code not ok, report mechanism driver error.")
-                raise ml2_exc.MechanismDriverError(method='__callBack__')
+                raise ml2_exc.MechanismDriverError(
+                    driver=ac_const.NW_HW_AC_DRIVER_NAME,
+                    method='__callBack__')
         elif status == req_code.no_content:
             pass
         else:
             LOG.debug("Status not ok, report mechanism driver error.")
-            raise ml2_exc.MechanismDriverError(method='__callBack__')
+            raise ml2_exc.MechanismDriverError(
+                driver=ac_const.NW_HW_AC_DRIVER_NAME,
+                method='__callBack__')

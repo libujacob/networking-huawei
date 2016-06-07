@@ -66,10 +66,10 @@ from the Neutron Server.
             [ml2_type_vxlan]
             vni_ranges = 65537:69999
 
-            [ml2_huawei]
+            [huawei_ac_config]
             host = 192.167.1.10
             username = admin
-            password = admin@huawei
+            password = xxxxxx
             neutron_name = NeutronServer1
             neutron_ip = 10.10.10.10
 

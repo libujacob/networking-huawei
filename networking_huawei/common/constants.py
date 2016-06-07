@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+NW_HW_AC_DRIVER_NAME = 'AC'
 NW_HW_NETWORKS = 'networks'
 NW_HW_SUBNETS = 'subnets'
 NW_HW_PORTS = 'ports'

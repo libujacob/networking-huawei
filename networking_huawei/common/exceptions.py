@@ -21,4 +21,4 @@ from networking_huawei._i18n import _
 
 class MechanismDriverError(exceptions.NeutronException):
     """Mechanism driver call failed."""
-    message = _("%(method)s failed.")
+    message = _("In %(driver)s driver, %(method)s failed.")
