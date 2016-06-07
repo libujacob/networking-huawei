@@ -68,11 +68,11 @@ class HuaweiACSecurityGroupsHandler(object):
         except Exception:
             LOG.warning(_LW("The SG group does not exist."))
 
-        security_group_info = self._set_security_group(security_group)
+        security_group_info = self.set_security_group(security_group)
         LOG.debug("The security group_info is %s.",
                   security_group_info)
         try:
-            self._rest_request(security_group_info['id'],
+            self.rest_request(security_group_info['id'],
                          {'securityGroup': security_group_info},
                          'create_security_group')
         except Exception:
@@ -88,7 +88,7 @@ class HuaweiACSecurityGroupsHandler(object):
         """
 
         try:
-            self._rest_request(group_id, {}, 'delete_security_group')
+            self.rest_request(group_id, {}, 'delete_security_group')
         except Exception:
             LOG.error(_LE("Rollback for create security group failed."))
 
@@ -104,10 +104,10 @@ class HuaweiACSecurityGroupsHandler(object):
         """
 
         security_group = kwargs['security_group']
-        security_group_info = self._set_security_group(security_group)
+        security_group_info = self.set_security_group(security_group)
         LOG.debug("The group is %s.", security_group_info)
         try:
-            self._rest_request(security_group_info['id'],
+            self.rest_request(security_group_info['id'],
                          {'securityGroup': security_group_info},
                          'update_security_group')
         except Exception:
@@ -129,7 +129,7 @@ class HuaweiACSecurityGroupsHandler(object):
         group_id = kwargs['security_group_id']
         LOG.debug("The group id is %s.", group_id)
         try:
-            self._rest_request(group_id, {}, 'delete_security_group')
+            self.rest_request(group_id, {}, 'delete_security_group')
         except Exception:
             LOG.error(_LE("Delete security group fail."))
 
@@ -150,7 +150,7 @@ class HuaweiACSecurityGroupsHandler(object):
         rule_info = self._set_security_group_rule(rule)
         LOG.debug("The group rule is %s.", rule_info)
         try:
-            self._rest_request(
+            self.rest_request(
                 rule_info['id'],
                 {'securityGroupRule': rule_info},
                 'create_security_group_rule')
@@ -170,7 +170,7 @@ class HuaweiACSecurityGroupsHandler(object):
         """
 
         try:
-            self._rest_request(rule_id, {}, 'delete_security_group_rule')
+            self.rest_request(rule_id, {}, 'delete_security_group_rule')
         except Exception:
             LOG.error(_LE("Rollback group rule failed."))
 
@@ -187,7 +187,7 @@ class HuaweiACSecurityGroupsHandler(object):
 
         rule_id = kwargs['security_group_rule_id']
         try:
-            self._rest_request(rule_id, {}, 'delete_security_group_rule')
+            self.rest_request(rule_id, {}, 'delete_security_group_rule')
         except Exception:
             LOG.error(_LE("Delete security group rule failed."))
         LOG.debug("End delete security group rule.")
@@ -205,12 +205,12 @@ class HuaweiACSecurityGroupsHandler(object):
 
         router_id = kwargs['router_id']
         try:
-            self._rest_request(router_id, {}, 'delete_snat')
+            self.rest_request(router_id, {}, 'delete_snat')
         except Exception:
             LOG.error(_LE("Delete SNAT failed."))
         LOG.debug("End delete SNAT.")
 
-    def _set_security_group(self, security_group):
+    def set_security_group(self, security_group):
         security_group_info = {}
         security_group_info['tenant_id'] = security_group['tenant_id']
         security_group_info['name'] = security_group['name']
@@ -248,7 +248,7 @@ class HuaweiACSecurityGroupsHandler(object):
         return rule_info
 
     @log_helpers.log_method_call
-    def _rest_request(self, id, entry_info, operation):
+    def rest_request(self, id, entry_info, operation):
 
         if operation in ac_const.NW_HW_NEUTRON_RESOURCES:
             methodname = ac_const.NW_HW_NEUTRON_RESOURCES[operation]['method']
@@ -280,7 +280,7 @@ class HuaweiACSecurityGroupsHandler(object):
             LOG.debug("The operation is wrong.")
             raise ml2_exc.MechanismDriverError(
                 driver=ac_const.NW_HW_AC_DRIVER_NAME,
-                method='_rest_request')
+                method='rest_request')
 
     @log_helpers.log_method_call
     def _rest_callback(self, errorcode, reason, status, data=None):
@@ -520,13 +520,14 @@ class HuaweiACMechanismDriver(api.MechanismDriver):
                 sg_group = self \
                     .securityGroupDb.get_security_group(
                         self.ctx, security_group_id)
-                security_group_info = _set_security_group(sg_group)
+                security_group_info = self\
+                    .secGroupSub.set_security_group(sg_group)
                 if security_group_info['name'] == 'default':
                     LOG.info(_LI("security_group_info is %s"),
                              security_group_info)
-                    rest_request(security_group_info['id'],
-                                 {'securityGroup': security_group_info},
-                                 'create_security_group')
+                    self.secGroupSub.rest_request(security_group_info['id'],
+                                     {'securityGroup': security_group_info},
+                                     'create_security_group')
         LOG.debug("The port_info is %s.", port_info)
         self.__restRequest__(port_info['port']['id'], port_info, operation)
 
